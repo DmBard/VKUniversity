@@ -1,7 +1,9 @@
 package com.dmbaryshev.vkschool;
 
 import android.app.Application;
+import android.content.Intent;
 
+import com.dmbaryshev.vkschool.ui.MainActivity;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
@@ -15,6 +17,7 @@ public class App extends Application {
         public void onVKAccessTokenChanged(VKAccessToken oldToken, VKAccessToken newToken) {
             if (newToken == null) {
                 DLog.i(TAG, "onVKAccessTokenChanged: ");
+                startActivity(new Intent(App.this, MainActivity.class));
             }
         }
     };
