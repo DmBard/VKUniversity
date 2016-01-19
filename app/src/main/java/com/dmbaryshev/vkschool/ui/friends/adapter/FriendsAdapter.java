@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.network.model.VkUser;
+import com.dmbaryshev.vkschool.ui.common.IHolderClick;
 import com.dmbaryshev.vkschool.utils.DLog;
 
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     private static final String TAG = DLog.makeLogTag(FriendsAdapter.class);
     private List<VkUser> items;
     private Context      context;
+    private IHolderClick mListener;
 
-    public FriendsAdapter(List<VkUser> items) {
+    public FriendsAdapter(List<VkUser> items, IHolderClick listener) {
         if (items != null) {
             this.items = new ArrayList<>(items);
+            mListener = listener;
         }
     }
 
@@ -31,7 +34,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.item_friend, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, mListener);
     }
 
     @Override
@@ -51,16 +54,28 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         } else { return 0; }
     }
 
+    public int getUserId(int adapterPosition) {
+        return items.get(adapterPosition).getId();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         protected ImageView ivAvatar;
         protected TextView  tvName;
         protected TextView  tvStatus;
+        protected IHolderClick listener;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view, final IHolderClick listener) {
             super(view);
             ivAvatar = (ImageView) view.findViewById(R.id.iv_avatar);
             tvName = (TextView) view.findViewById(R.id.tv_name);
             tvStatus = (TextView) view.findViewById(R.id.tv_status);
+            this.listener = listener;
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 }

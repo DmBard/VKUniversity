@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:textColor="@color/color_font_grey"
+            android:textColor="@color/color_grey"
             android:textSize="@dimen/font_small"
             />
     </LinearLayout>

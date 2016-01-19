@@ -33,7 +33,7 @@ public class ApiHelper {
         okHttpClient.interceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-                return addAccessToken(chain, context);
+                return addConstatnlyParameters(chain, context);
             }
         });
         addLogging(okHttpClient);
@@ -42,14 +42,15 @@ public class ApiHelper {
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(NetworkConstants.BASE_URL)
                                                   .client(okHttpClient)
-                                                  .addConverterFactory(GsonConverterFactory.create(gson))
+                                                  .addConverterFactory(GsonConverterFactory.create(
+                                                          gson))
                                                   .build();
 
         return retrofit.create(ApiService.class);
     }
 
-    private static Response addAccessToken(Interceptor.Chain chain, Context context) throws
-                                                                                     IOException {
+    private static Response addConstatnlyParameters(Interceptor.Chain chain, Context context) throws
+                                                                                              IOException {
         if (chain.request() == null) { return null; }
         final String token = PreferencesHelper.getInstance(context).getToken();
         if (token == null) { return null; }
@@ -57,6 +58,8 @@ public class ApiHelper {
         HttpUrl url = request.httpUrl()
                              .newBuilder()
                              .addQueryParameter(NetworkConstants.PARAM_ACCESS_TOKEN, token)
+                             .addQueryParameter(NetworkConstants.PARAM_API_VERSION,
+                                                NetworkConstants.API_VERSION)
                              .build();
         request = request.newBuilder().url(url).build();
         return chain.proceed(request);

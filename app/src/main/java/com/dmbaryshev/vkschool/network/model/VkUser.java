@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class VkUser {
-    @SerializedName ("uid")
+    @SerializedName ("id")
     @Expose
     private Integer id;
     @SerializedName ("first_name")

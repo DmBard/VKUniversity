@@ -6,5 +6,7 @@
 
     <!--text color-->
     <color name="color_font_black">#2E3033</color>
-    <color name="color_font_grey">#909499</color>
+    <color name="color_grey">#909499</color>
+    <color name="color_white_grey">#cacccf</color>
+    <color name="color_white_blue">#95bee7</color>
 </resources>

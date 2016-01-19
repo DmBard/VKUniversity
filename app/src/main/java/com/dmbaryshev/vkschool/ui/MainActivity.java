@@ -1,5 +1,6 @@
 package com.dmbaryshev.vkschool.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.ui.friends.fragment.FriendsFragment;
+import com.dmbaryshev.vkschool.ui.messages.fragment.MessagesFragment;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.utils.PreferencesHelper;
 import com.vk.sdk.VKAccessToken;
@@ -16,7 +18,7 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FriendsFragment.IFriendsFragmentListener {
     private static final String TAG = DLog.makeLogTag(MainActivity.class);
 
     private FragmentManager mManager;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         if (!VKSdk.isLoggedIn()) {
             VKSdk.login(MainActivity.this,
                         "friends",
+                        "messages",
                         "photos",
                         "audio",
                         "wall",
@@ -48,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void replaceFragment(FriendsFragment fragment) {
-        mManager.beginTransaction().replace(R.id.container, fragment).commitAllowingStateLoss();
+    private void replaceFragment(Fragment fragment) {
+        mManager.beginTransaction().replace(R.id.container, fragment).commit();
     }
 
     @Override
@@ -78,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
                 final String accessToken = res.accessToken;
                 DLog.i(TAG, "onResult: accessToken = " + accessToken);
                 preferencesHelper.setToken(accessToken);
-                replaceFragment(FriendsFragment.newInstance());
+                finish();
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
             }
 
             @Override
@@ -86,5 +90,10 @@ public class MainActivity extends AppCompatActivity {
                 DLog.i(TAG, "onResult: error = " + error.errorMessage);
             }
         };
+    }
+
+    @Override
+    public void openMessageFragment(int id) {
+        replaceFragment(MessagesFragment.newInstance(id));
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.dmbaryshev.vkschool.ui.MainActivity;
 import com.dmbaryshev.vkschool.utils.DLog;
+import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -27,5 +28,6 @@ public class App extends Application {
         super.onCreate();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
+        LeakCanary.install(this);
     }
 }
