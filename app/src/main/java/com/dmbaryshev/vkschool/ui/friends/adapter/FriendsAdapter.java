@@ -14,7 +14,6 @@ import com.dmbaryshev.vkschool.network.model.VkUser;
 import com.dmbaryshev.vkschool.ui.common.IHolderClick;
 import com.dmbaryshev.vkschool.utils.DLog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
@@ -25,7 +24,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
     public FriendsAdapter(List<VkUser> items, IHolderClick listener) {
         if (items != null) {
-            this.items = new ArrayList<>(items);
+            this.items = items;
             mListener = listener;
         }
     }
@@ -43,7 +42,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
 
         final VkUser item = items.get(position);
         holder.tvName.setText(String.format("%s %s", item.getFirstName(), item.getLastName()));
-        holder.tvStatus.setText(item.getOnline() == 1 ? context.getString(R.string.status_online) : "");
+        holder.tvStatus.setText(
+                item.getOnline() == 1 ? context.getString(R.string.status_online) : "");
         Glide.with(context).load(item.getPhoto100()).into(holder.ivAvatar);
     }
 
@@ -59,9 +59,9 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView ivAvatar;
-        protected TextView  tvName;
-        protected TextView  tvStatus;
+        protected ImageView    ivAvatar;
+        protected TextView     tvName;
+        protected TextView     tvStatus;
         protected IHolderClick listener;
 
         public ViewHolder(View view, final IHolderClick listener) {

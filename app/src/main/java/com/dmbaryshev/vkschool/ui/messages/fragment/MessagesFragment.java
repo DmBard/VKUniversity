@@ -26,6 +26,7 @@ import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.utils.NetworkHelper;
 import com.squareup.okhttp.ResponseBody;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import retrofit.Call;
@@ -40,7 +41,6 @@ public class MessagesFragment extends Fragment
     private static final int    ID_IMAGE_LOADER = 0;
     private static final String KEY_ID_USER     = "ID_USER";
 
-    private RecyclerView    mRvFriends;
     private EditText        mEtText;
     private Button          mBtSend;
     private ProgressBar     mProgressBar;
@@ -63,6 +63,9 @@ public class MessagesFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIdUser = getArguments().getInt(KEY_ID_USER);
+
+        mVkMessages = new LinkedList<>();
+        mMessagesAdapter = new MessagesAdapter(mVkMessages);
     }
 
     @Override
@@ -109,12 +112,13 @@ public class MessagesFragment extends Fragment
     }
 
     private void initRecyclerView(View view) {
-        mRvFriends = (RecyclerView) view.findViewById(R.id.rv_messages);
+        RecyclerView rvMessages = (RecyclerView) view.findViewById(R.id.rv_messages);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);
-        mRvFriends.setLayoutManager(layoutManager);
-        mRvFriends.setHasFixedSize(true);
-        mRvFriends.setItemAnimator(new DefaultItemAnimator());
+        rvMessages.setLayoutManager(layoutManager);
+        rvMessages.setHasFixedSize(true);
+        rvMessages.setItemAnimator(new DefaultItemAnimator());
+        rvMessages.setAdapter(mMessagesAdapter);
     }
 
     private void load(View view) {
@@ -152,15 +156,15 @@ public class MessagesFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<List<VkMessage>> loader, List<VkMessage> data) {
         mProgressBar.setVisibility(View.GONE);
-        mVkMessages = data;
+
         if (data == null) {
             showErrorSnackbar(getView(), R.string.error_common);
             return;
         }
         // TODO: 18.01.16 implement saving to database
-
-        mMessagesAdapter = new MessagesAdapter(mVkMessages);
-        mRvFriends.setAdapter(mMessagesAdapter);
+        mVkMessages.clear();
+        mVkMessages.addAll(data);
+        mMessagesAdapter.notifyDataSetChanged();
     }
 
     @Override

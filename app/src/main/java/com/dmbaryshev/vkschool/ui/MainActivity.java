@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity implements FriendsFragment.I
 
         mManager = getFragmentManager();
 
-        openOrLogin();
+        if (savedInstanceState == null) {
+            openOrLogin();
+        }
     }
 
     private void openOrLogin() {

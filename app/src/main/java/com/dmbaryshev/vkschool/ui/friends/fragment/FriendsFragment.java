@@ -24,6 +24,7 @@ import com.dmbaryshev.vkschool.ui.common.loader.VkLoader;
 import com.dmbaryshev.vkschool.ui.friends.adapter.FriendsAdapter;
 import com.dmbaryshev.vkschool.utils.NetworkHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Call;
@@ -31,12 +32,12 @@ import retrofit.Call;
 public class FriendsFragment extends Fragment
         implements IHolderClick, LoaderManager.LoaderCallbacks<List<VkUser>> {
 
-    private static final int ID_IMAGE_LOADER = 0;
+    private static final int ID_FRIENDS_LOADER = 10;
 
-    private RecyclerView             mRvFriends;
     private ProgressDialog           mProgressDialog;
     private IFriendsFragmentListener mListener;
     private FriendsAdapter           mFriendsAdapter;
+    private List<VkUser>             mVkUsers;
 
     public FriendsFragment() {
     }
@@ -46,16 +47,17 @@ public class FriendsFragment extends Fragment
     }
 
     private void initRecyclerView(View view) {
-        mRvFriends = (RecyclerView) view.findViewById(R.id.rv_friends);
-        mRvFriends.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRvFriends.setHasFixedSize(false);
-        mRvFriends.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView rvFriends = (RecyclerView) view.findViewById(R.id.rv_friends);
+        rvFriends.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvFriends.setHasFixedSize(false);
+        rvFriends.setItemAnimator(new DefaultItemAnimator());
+        rvFriends.setAdapter(mFriendsAdapter);
     }
 
     private void load(View view) {
         if (NetworkHelper.isOnline(getActivity())) {
             if (mProgressDialog != null && mProgressDialog.isShowing()) { return; }
-            mProgressDialog = ProgressDialog.show                                                          (getActivity(),
+            mProgressDialog = ProgressDialog.show(getActivity(),
                                                   getActivity().getString(R.string.progress_dialog_title),
                                                   getActivity().getString(R.string.progress_dialog_message));
             initFriendsLoader();
@@ -65,7 +67,7 @@ public class FriendsFragment extends Fragment
     }
 
     private void initFriendsLoader() {
-        getLoaderManager().initLoader(ID_IMAGE_LOADER, null, this);
+        getLoaderManager().initLoader(ID_FRIENDS_LOADER, null, this);
     }
 
     public void showErrorSnackbar(final View view, int errorText) {
@@ -93,10 +95,12 @@ public class FriendsFragment extends Fragment
             showErrorSnackbar(getView(), R.string.error_common);
             return;
         }
+
+        mVkUsers.clear();
+        mVkUsers.addAll(data);
+        mFriendsAdapter.notifyDataSetChanged();
         // TODO: 18.01.16 implement saving to database
 
-        mFriendsAdapter = new FriendsAdapter(data, this);
-        mRvFriends.setAdapter(mFriendsAdapter);
     }
 
     @Override
@@ -115,6 +119,13 @@ public class FriendsFragment extends Fragment
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement FragmentButtonListener");
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mVkUsers = new ArrayList<>();
+        mFriendsAdapter = new FriendsAdapter(mVkUsers, this);
     }
 
     @Override
