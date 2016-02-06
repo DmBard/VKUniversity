@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class VkUser {
     @SerializedName ("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName ("first_name")
     @Expose
     private String  firstName;
@@ -18,19 +18,19 @@ public class VkUser {
     private String  photo100;
     @SerializedName ("online")
     @Expose
-    private Integer online;
+    private int online;
 
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -79,14 +79,14 @@ public class VkUser {
     /**
      * @return The online
      */
-    public Integer getOnline() {
+    public int getOnline() {
         return online;
     }
 
     /**
      * @param online The online
      */
-    public void setOnline(Integer online) {
+    public void setOnline(int online) {
         this.online = online;
     }
 }

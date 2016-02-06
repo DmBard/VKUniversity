@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class VkPhoto {
     @SerializedName ("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName ("album_id")
     @Expose
-    private Integer albumId;
+    private int albumId;
     @SerializedName ("owner_id")
     @Expose
-    private Integer ownerId;
+    private int ownerId;
     @SerializedName ("photo_75")
     @Expose
     private String  photo75;
@@ -30,16 +30,16 @@ public class VkPhoto {
     private String  photo1280;
     @SerializedName ("width")
     @Expose
-    private Integer width;
+    private int width;
     @SerializedName ("height")
     @Expose
-    private Integer height;
+    private int height;
     @SerializedName ("text")
     @Expose
     private String  text;
     @SerializedName ("date")
     @Expose
-    private Integer date;
+    private int date;
     @SerializedName ("access_key")
     @Expose
     private String  accessKey;
@@ -47,42 +47,42 @@ public class VkPhoto {
     /**
      * @return The id
      */
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     /**
      * @return The albumId
      */
-    public Integer getAlbumId() {
+    public int getAlbumId() {
         return albumId;
     }
 
     /**
      * @param albumId The album_id
      */
-    public void setAlbumId(Integer albumId) {
+    public void setAlbumId(int albumId) {
         this.albumId = albumId;
     }
 
     /**
      * @return The ownerId
      */
-    public Integer getOwnerId() {
+    public int getOwnerId() {
         return ownerId;
     }
 
     /**
      * @param ownerId The owner_id
      */
-    public void setOwnerId(Integer ownerId) {
+    public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -159,28 +159,28 @@ public class VkPhoto {
     /**
      * @return The width
      */
-    public Integer getWidth() {
+    public int getWidth() {
         return width;
     }
 
     /**
      * @param width The width
      */
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
     /**
      * @return The height
      */
-    public Integer getHeight() {
+    public int getHeight() {
         return height;
     }
 
     /**
      * @param height The height
      */
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -201,14 +201,14 @@ public class VkPhoto {
     /**
      * @return The date
      */
-    public Integer getDate() {
+    public int getDate() {
         return date;
     }
 
     /**
      * @param date The date
      */
-    public void setDate(Integer date) {
+    public void setDate(int date) {
         this.date = date;
     }
 

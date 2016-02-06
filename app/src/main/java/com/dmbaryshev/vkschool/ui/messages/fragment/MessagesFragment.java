@@ -96,7 +96,7 @@ public class MessagesFragment extends Fragment
                         vkMessage.setBody(messageText);
                         vkMessage.setOut(1);
                         mVkMessages.add(0, vkMessage);
-                        mMessagesAdapter.notifyItemInserted(0);
+                        mMessagesAdapter.notifyDataSetChanged();
                     }
 
                     @Override

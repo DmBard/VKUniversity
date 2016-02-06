@@ -9,7 +9,7 @@ import java.util.List;
 public class VkResponse<T> {
     @SerializedName ("count")
     @Expose
-    private Integer count;
+    private int count;
     @SerializedName ("items")
     @Expose
     private List<T> items = new ArrayList<>();
@@ -17,14 +17,14 @@ public class VkResponse<T> {
     /**
      * @return The count
      */
-    public Integer getCount() {
+    public int getCount() {
         return count;
     }
 
     /**
      * @param count The count
      */
-    public void setCount(Integer count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
