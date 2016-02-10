@@ -41,9 +41,9 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         if (items == null || items.size() <= 0) {return;}
 
         final VkUser item = items.get(position);
-        holder.tvName.setText(String.format("%s %s", item.getFirstName(), item.getLastName()));
-        holder.tvStatus.setText(item.getOnline() == 1 ? context.getString(R.string.status_online) : "");
-        Glide.with(context).load(item.getPhoto100()).into(holder.ivAvatar);
+        holder.tvName.setText(String.format("%s %s", item.firstName, item.lastName));
+        holder.tvStatus.setText(item.online == 1 ? context.getString(R.string.status_online) : "");
+        Glide.with(context).load(item.photo100).into(holder.ivAvatar);
     }
 
     @Override
@@ -53,8 +53,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         } else { return 0; }
     }
 
-    public int getUserId(int adapterPosition) {
-        return items.get(adapterPosition).getId();
+    public VkUser getUser(int adapterPosition) {
+        return items.get(adapterPosition);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,12 +69,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
             tvName = (TextView) view.findViewById(R.id.tv_name);
             tvStatus = (TextView) view.findViewById(R.id.tv_status);
             this.listener = listener;
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(getAdapterPosition());
-                }
-            });
+            view.setOnClickListener(v->listener.onItemClick(getAdapterPosition()));
         }
     }
 }

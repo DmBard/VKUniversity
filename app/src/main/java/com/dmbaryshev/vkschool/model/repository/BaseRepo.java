@@ -36,12 +36,12 @@ public abstract class BaseRepo<T> {
             return null;
         }
 
-        VkResponse vkResponse = commonResponse.getVkResponse();
+        VkResponse vkResponse = commonResponse.mVkResponse;
         if (vkResponse == null) {
             CommonError commonError = ErrorUtils.parseError(response);
-            vkError = commonError.getVkError();
+            vkError = commonError.mVkError;
         } else {
-            answer = vkResponse.getItems();
+            answer = vkResponse.items;
         }
 
         return new ResponseAnswer<>(answer, vkError);

@@ -15,7 +15,7 @@ public class UserRepo extends BaseRepo<VkUser> {
     public Observable<ResponseAnswer<VkUser>> getFriends() {
         Observable<Response<CommonResponse<VkUser>>> observable = ApiHelper.createService()
                                                                            .getFriendList("hints",
-                                                                                          "photo_100")
+                                                                                          "photo_100,last_seen")
                                                                            .subscribeOn(Schedulers.io())
                                                                            .observeOn(
                                                                                    AndroidSchedulers

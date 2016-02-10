@@ -1,7 +1,5 @@
 package com.dmbaryshev.vkschool.model.network;
 
-import android.content.Context;
-
 import com.dmbaryshev.vkschool.model.dto.common.CommonError;
 
 import java.io.IOException;
@@ -11,9 +9,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Response;
 
-/**
- * Created by Dmitry on 08.02.2016.
- */
 public class ErrorUtils {
 
     public static CommonError parseError(Response<?> response) {

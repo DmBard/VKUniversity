@@ -29,7 +29,7 @@ public class FriendsPresenter extends BasePresenter {
         List<VkUser> answer = data.getAnswer();
 
         if (vkError != null) {
-            mView.showError(vkError.getErrorMsg());
+            mView.showError(vkError.errorMsg);
             return;
         }
 

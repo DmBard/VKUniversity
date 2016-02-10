@@ -31,7 +31,7 @@ public class App extends Application {
         vkAccessTokenTracker.startTracking();
         App.context = getApplicationContext();
         VKSdk.initialize(this);
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
     }
     public static Context getAppContext() {
         return App.context;

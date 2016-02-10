@@ -27,9 +27,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        final int message_resource =
+        final int messageResource =
                 viewType == 0 ? R.layout.item_out_message : R.layout.item_in_message;
-        View view = LayoutInflater.from(context).inflate(message_resource, parent, false);
+        View view = LayoutInflater.from(context).inflate(messageResource, parent, false);
         return new ViewHolder(view);
     }
 
@@ -41,7 +41,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position).getOut();
+        return items.get(position).out;
     }
 
     @Override
@@ -57,22 +57,22 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView ivAtachmentPhoto;
+        private final ImageView ivAttachmentPhoto;
         private final TextView  tvText;
 
         public ViewHolder(View view) {
             super(view);
-            ivAtachmentPhoto = (ImageView) view.findViewById(R.id.iv_attachment_photo);
+            ivAttachmentPhoto = (ImageView) view.findViewById(R.id.iv_attachment_photo);
             tvText = (TextView) view.findViewById(R.id.tv_text);
         }
 
         public void bind(Context context, final VkMessage item) {
-            tvText.setText(item.getBody());
+            tvText.setText(item.body);
 
             if (item.getPhoto() == null) {
-                ivAtachmentPhoto.setImageDrawable(null);
+                ivAttachmentPhoto.setImageDrawable(null);
             } else {
-                Glide.with(context).load(item.getPhoto()).into(ivAtachmentPhoto);
+                Glide.with(context).load(item.getPhoto()).into(ivAttachmentPhoto);
             }
         }
     }

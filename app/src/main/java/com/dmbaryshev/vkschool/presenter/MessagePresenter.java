@@ -33,7 +33,7 @@ public class MessagePresenter extends BasePresenter {
         List<VkMessage> answer = data.getAnswer();
 
         if (vkError != null) {
-            mView.showError(vkError.getErrorMsg());
+            mView.showError(vkError.errorMsg);
             return;
         }
 
@@ -43,10 +43,6 @@ public class MessagePresenter extends BasePresenter {
         }
 
         mView.showMessages(answer);
-    }
-
-    private void addMessage(String messageText) {
-        mView.addMessage(messageText);
     }
 
     @Override
@@ -60,9 +56,20 @@ public class MessagePresenter extends BasePresenter {
         } else { mView.showError(R.string.error_network_unavailable); }
     }
 
+    public void load(int lastMessageId) {
+        if (NetworkHelper.isOnline()) {
+            mView.startLoad();
+            Observable<ResponseAnswer<VkMessage>> observable = mMessageRepo.getMessages(mView.getIdUser(),
+                                                                                        20,
+                                                                                        lastMessageId);
+            Subscription subscription = observable.subscribe(this::showData);
+            addSubscription(subscription);
+        } else { mView.showError(R.string.error_network_unavailable); }
+    }
+
     public void sendMessage(String messageText) {
         Observable<Void> observable = mMessageRepo.sendMessage(mView.getIdUser(), messageText);
-        Subscription subscription = observable.subscribe(v->addMessage(messageText));
+        Subscription subscription = observable.subscribe(v->mView.addMessage(messageText));
         addSubscription(subscription);
     }
 }

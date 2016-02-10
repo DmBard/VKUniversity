@@ -12,6 +12,7 @@
         android:layout_gravity="right"
         android:background="@drawable/drawable_msg_out"
         android:orientation="vertical"
+        android:layout_marginLeft="@dimen/spacing_large"
         android:padding="@dimen/spacing_small">
 
         <TextView

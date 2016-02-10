@@ -2,7 +2,6 @@ package com.dmbaryshev.vkschool.view.friends.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,7 @@ import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.dto.VkUser;
 import com.dmbaryshev.vkschool.presenter.BasePresenter;
 import com.dmbaryshev.vkschool.presenter.FriendsPresenter;
-import com.dmbaryshev.vkschool.utils.NetworkHelper;
+import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
 import com.dmbaryshev.vkschool.view.common.IHolderClick;
 import com.dmbaryshev.vkschool.view.friends.adapter.FriendsAdapter;
@@ -24,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsFragment extends BaseFragment implements IFriendsView, IHolderClick {
-
-    private ProgressDialog           mProgressDialog;
+    public static final String TAG = DLog.makeLogTag(FriendsFragment.class);
+    private ProgressDialog mProgressDialog;
     private IFriendsFragmentListener mListener;
     private FriendsAdapter           mFriendsAdapter;
     private List<VkUser>             mVkUsers;
@@ -52,7 +51,7 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
 
     @Override
     public void onItemClick(int adapterPosition) {
-        mListener.openMessageFragment(mFriendsAdapter.getUserId(adapterPosition));
+        mListener.openMessageFragment(mFriendsAdapter.getUser(adapterPosition));
     }
 
     @Override
@@ -134,6 +133,6 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
     }
 
     public interface IFriendsFragmentListener {
-        void openMessageFragment(int id);
+        void openMessageFragment(VkUser id);
     }
 }

@@ -21,19 +21,19 @@ public interface ApiService {
                                                                @Query ("fields") String fields);
 
     @GET ("/method/messages.getHistory")
-    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("offset") int offset,
+    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
+                                                                      @Query ("offset") int offset,
                                                                       @Query ("count") int count,
-                                                                      @Query ("user_id") int userId,
-                                                                      @Query ("start_message_id ") int startMessageId);
+                                                                      @Query ("start_message_id") int startMessageId);
 
     @GET ("/method/messages.getHistory")
-    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("count") int count,
-                                                                      @Query ("user_id") int userId,
-                                                                      @Query ("start_message_id ") int startMessageId);
+    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
+                                                                      @Query ("count") int count,
+                                                                      @Query ("start_message_id") int startMessageId);
 
     @GET ("/method/messages.getHistory")
-    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("count") int count,
-                                                                      @Query ("user_id") int userId);
+    Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
+                                                                      @Query ("count") int count);
 
     @POST ("/method/messages.send")
     Observable<Void> sendMessage(@Query ("user_id") int userId, @Query ("message") String message);
