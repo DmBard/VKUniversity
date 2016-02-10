@@ -46,18 +46,6 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
     }
 
     @Override
-    protected void load(View view) {
-        if (NetworkHelper.isOnline(getActivity())) {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) { return; }
-            mProgressDialog = ProgressDialog.show(getActivity(),
-                                                  getActivity().getString(R.string.progress_dialog_title),
-                                                  getActivity().getString(R.string.progress_dialog_message));
-        } else {
-            showErrorSnackbar(view, R.string.error_network_unavailable);
-        }
-    }
-
-    @Override
     protected BasePresenter getPresenter() {
         return new FriendsPresenter(this);
     }
@@ -130,6 +118,13 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
     public void showError(int errorTextRes) {
         showErrorSnackbar(getView(), errorTextRes);
     }
+
+    @Override
+    public void startLoad() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) { return; }
+        mProgressDialog = ProgressDialog.show(getActivity(),
+                                              getActivity().getString(R.string.progress_dialog_title),
+                                              getActivity().getString(R.string.progress_dialog_message));    }
 
     @Override
     public void showUsers(List<VkUser> answer) {

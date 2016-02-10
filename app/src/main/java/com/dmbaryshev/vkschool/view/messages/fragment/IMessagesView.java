@@ -10,4 +10,6 @@ public interface IMessagesView extends IView {
     void showMessages(List<VkMessage> answer);
 
     int getIdUser();
+
+    void addMessage(String messageText);
 }

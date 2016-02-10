@@ -5,6 +5,7 @@ import com.dmbaryshev.vkschool.model.dto.VkUser;
 import com.dmbaryshev.vkschool.model.dto.common.VkError;
 import com.dmbaryshev.vkschool.model.network.ResponseAnswer;
 import com.dmbaryshev.vkschool.model.repository.UserRepo;
+import com.dmbaryshev.vkschool.utils.NetworkHelper;
 import com.dmbaryshev.vkschool.view.friends.fragment.IFriendsView;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class FriendsPresenter extends BasePresenter {
 
     public FriendsPresenter(IFriendsView view) {mView = view;}
 
-    public void showData(ResponseAnswer<VkUser> data) {
+    private void showData(ResponseAnswer<VkUser> data) {
         mView.stopLoad();
         if (data == null) {
             mView.showError(R.string.error_common);
@@ -42,9 +43,12 @@ public class FriendsPresenter extends BasePresenter {
 
     @Override
     public void load() {
-        UserRepo userRepo = new UserRepo();
-        Observable<ResponseAnswer<VkUser>> observable = userRepo.getResponseAnswer();
-        Subscription subscription = observable.subscribe(this::showData);
-        addSubscription(subscription);
+        if (NetworkHelper.isOnline()) {
+            mView.startLoad();
+            UserRepo userRepo = new UserRepo();
+            Observable<ResponseAnswer<VkUser>> observable = userRepo.getFriends();
+            Subscription subscription = observable.subscribe(this::showData);
+            addSubscription(subscription);
+        } else { mView.showError(R.string.error_network_unavailable); }
     }
 }

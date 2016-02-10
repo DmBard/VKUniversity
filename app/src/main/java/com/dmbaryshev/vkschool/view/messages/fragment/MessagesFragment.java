@@ -68,34 +68,10 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
         initRecyclerView(view);
         mEtText = (EditText) view.findViewById(R.id.et_message);
         mBtSend = (Button) view.findViewById(R.id.bt_send);
-        //        mBtSend.setOnClickListener(new View.OnClickListener() {
-        //            @Override
-        //            public void onClick(View v) {
-        //                final String messageText = mEtText.getText().toString();
-        //                Call<Void> call = ApiHelper.createService(getActivity())
-        //                                           .sendMessage(mIdUser, messageText);
-        //                call.enqueue(new Callback<Void>() {
-        //                    @Override
-        //                    public void onResponse(Call<Void> call, Response<Void> response) {
-        //                        DLog.i(TAG, "onResponse: response = " + response.body().toString());
-        //                        // TODO: 20.01.16 change logic
-        //                        VkMessage vkMessage = new VkMessage();
-        //                        vkMessage.setBody(messageText);
-        //                        vkMessage.setOut(1);
-        //                        mVkMessages.add(0, vkMessage);
-        //                        mMessagesAdapter.notifyDataSetChanged();
-        //                    }
-        //
-        //                    @Override
-        //                    public void onFailure(Call<Void> call, Throwable t) {
-        //
-        //                    }
-        //                });
-        //            }
-        //        });
-
+        mBtSend.setOnClickListener(v->((MessagePresenter) mPresenter).sendMessage(mEtText.getText()
+                                                                                         .toString()));
         mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading);
-        load(view);
+        mPresenter.load();
     }
 
     private void initRecyclerView(View view) {
@@ -106,16 +82,6 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
         rvMessages.setHasFixedSize(true);
         rvMessages.setItemAnimator(new DefaultItemAnimator());
         rvMessages.setAdapter(mMessagesAdapter);
-    }
-
-    @Override
-    protected void load(View view) {
-        if (NetworkHelper.isOnline(getActivity())) {
-            if (mProgressBar.getVisibility() == View.VISIBLE) { return; }
-            mProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            showErrorSnackbar(view, R.string.error_network_unavailable);
-        }
     }
 
     @Override
@@ -137,6 +103,16 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     }
 
     @Override
+    public void addMessage(String messageText) {
+        VkMessage vkMessage = new VkMessage();
+        vkMessage.setBody(messageText);
+        vkMessage.setOut(1);
+        mVkMessages.add(0, vkMessage);
+        mMessagesAdapter.notifyDataSetChanged();
+        mEtText.setText("");
+    }
+
+    @Override
     public void showError(String errorText) {
         showErrorSnackbar(getView(), errorText);
     }
@@ -149,5 +125,10 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     @Override
     public void showError(int errorTextRes) {
         showErrorSnackbar(getView(), errorTextRes);
+    }
+
+    @Override
+    public void startLoad() {
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 }

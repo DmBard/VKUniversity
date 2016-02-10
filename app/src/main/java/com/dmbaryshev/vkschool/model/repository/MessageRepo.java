@@ -3,6 +3,7 @@ package com.dmbaryshev.vkschool.model.repository;
 import com.dmbaryshev.vkschool.model.network.ApiHelper;
 import com.dmbaryshev.vkschool.model.dto.VkMessage;
 import com.dmbaryshev.vkschool.model.dto.common.CommonResponse;
+import com.dmbaryshev.vkschool.model.network.ResponseAnswer;
 
 import retrofit2.Response;
 import rx.Observable;
@@ -11,16 +12,23 @@ import rx.schedulers.Schedulers;
 
 public class MessageRepo extends BaseRepo<VkMessage> {
 
-    private int mIdUser;
-
-    public MessageRepo(int idUser) {mIdUser = idUser;}
-
-    @Override
-    protected Observable<Response<CommonResponse<VkMessage>>> initObservable() {
+    public Observable<Void> sendMessage(int userId, String messageText) {
         return ApiHelper.createService()
-                        .getMessageHistory(20, mIdUser)
+                        .sendMessage(userId, messageText)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
-        //                        .compose(applySchedulers());
+    }
+
+    public Observable<ResponseAnswer<VkMessage>> getMessages(int userId, int messagesCount) {
+        Observable<Response<CommonResponse<VkMessage>>> observable = ApiHelper.createService()
+                                                                              .getMessageHistory(
+                                                                                      messagesCount,
+                                                                                      userId)
+                                                                              .subscribeOn(
+                                                                                      Schedulers.io())
+                                                                              .observeOn(
+                                                                                      AndroidSchedulers
+                                                                                              .mainThread());
+        return getResponseAnswer(observable);
     }
 }

@@ -18,21 +18,14 @@ import rx.schedulers.Schedulers;
 public abstract class BaseRepo<T> {
     private static final String TAG = DLog.makeLogTag(BaseRepo.class);
 
-    protected Observable<Response<CommonResponse<T>>> mObservable;
-    protected Observable.Transformer        schedulersTransformer;
-
     public BaseRepo() {
-//        schedulersTransformer = o->o.subscribeOn(Schedulers.io())
-//                                    .observeOn(AndroidSchedulers.mainThread());
-                                    /*.unsubscribeOn(Schedulers.io())*/ // TODO: remove when https://github.com/square/okhttp/issues/1592 is fixed
     }
 
-    public Observable<ResponseAnswer<T>> getResponseAnswer() {
-        mObservable = initObservable();
-        return mObservable.map(this::initResponseAnswer);
+    protected Observable<ResponseAnswer<T>> getResponseAnswer(Observable<Response<CommonResponse<T>>> observable) {
+        return observable.map(this::initResponseAnswer);
     }
 
-    public ResponseAnswer<T> initResponseAnswer(Response<CommonResponse<T>> response) {
+    private ResponseAnswer<T> initResponseAnswer(Response<CommonResponse<T>> response) {
         List<T> answer = null;
         VkError vkError = null;
         if (response == null) {
@@ -53,11 +46,4 @@ public abstract class BaseRepo<T> {
 
         return new ResponseAnswer<>(answer, vkError);
     }
-
-    @SuppressWarnings ("unchecked")
-    protected <E> Observable.Transformer<E, E> applySchedulers() {
-        return (Observable.Transformer<E, E>) schedulersTransformer;
-    }
-
-    protected abstract Observable<Response<CommonResponse<T>>> initObservable();
 }
