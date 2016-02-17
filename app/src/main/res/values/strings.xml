@@ -10,4 +10,8 @@
     <string name="message_button_text_send">Send</string>
 
     <integer name="com_vk_sdk_AppId">5182156</integer>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

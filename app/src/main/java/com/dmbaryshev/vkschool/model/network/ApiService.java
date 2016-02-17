@@ -1,5 +1,6 @@
 package com.dmbaryshev.vkschool.model.network;
 
+import com.dmbaryshev.vkschool.model.dto.VkAudio;
 import com.dmbaryshev.vkschool.model.dto.VkMessage;
 import com.dmbaryshev.vkschool.model.dto.VkUser;
 import com.dmbaryshev.vkschool.model.dto.common.CommonResponse;
@@ -37,4 +38,13 @@ public interface ApiService {
 
     @POST ("/method/messages.send")
     Observable<Void> sendMessage(@Query ("user_id") int userId, @Query ("message") String message);
+
+    @GET ("/method/audio.get")
+    Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("owner_id") int ownerId,
+                                                           @Query ("count") int count);
+
+    @GET ("/method/audio.get")
+    Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count);
+
+
 }
