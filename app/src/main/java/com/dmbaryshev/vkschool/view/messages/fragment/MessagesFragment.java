@@ -12,8 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkMessage;
-import com.dmbaryshev.vkschool.presenter.BasePresenter;
+import com.dmbaryshev.vkschool.model.view_model.MessageVM;
 import com.dmbaryshev.vkschool.presenter.MessagePresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
@@ -22,7 +21,7 @@ import com.dmbaryshev.vkschool.view.messages.adapter.MessagesAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MessagesFragment extends BaseFragment implements IMessagesView {
+public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMessagesView {
     public static final String TAG = DLog.makeLogTag(MessagesFragment.class);
 
     private static final String KEY_ID_USER = "ID_USER";
@@ -31,7 +30,7 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     private ProgressBar     mProgressBar;
     private MessagesAdapter mMessagesAdapter;
     private int             mIdUser;
-    private List<VkMessage> mVkMessages;
+    private List<MessageVM> mMessages;
     private boolean mLoading = false;
 
     public MessagesFragment() {
@@ -49,8 +48,8 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIdUser = getArguments().getInt(KEY_ID_USER);
-        mVkMessages = new LinkedList<>();
-        mMessagesAdapter = new MessagesAdapter(mVkMessages);
+        mMessages = new LinkedList<>();
+        mMessagesAdapter = new MessagesAdapter(mMessages);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
         mEtText = (EditText) view.findViewById(R.id.et_message);
         mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading);
         Button btSend = (Button) view.findViewById(R.id.bt_send);
-        btSend.setOnClickListener(v->((MessagePresenter) mPresenter).sendMessage(mEtText.getText()
-                                                                                        .toString()));
+        btSend.setOnClickListener(v->mPresenter.sendMessage(mEtText.getText().toString()));
+        mPresenter.bindView(this);
         mPresenter.load();
     }
 
@@ -89,15 +88,15 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
                 {
                     int visibleItemCount = layoutManager.getChildCount();
                     int totalItemCount = layoutManager.getItemCount();
-                    int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+                    int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
 
                     if (!mLoading)
                     {
-                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        if ( (visibleItemCount + pastVisibleItems) >= totalItemCount)
                         {
                             mLoading = true;
-                            int lastMessageId = mVkMessages.get(mVkMessages.size() - 1).id;
-                            ((MessagePresenter)mPresenter).load(lastMessageId);
+                            int lastMessageId = mMessages.get(mMessages.size() - 1).id;
+                            mPresenter.load(lastMessageId);
                         }
                     }
                 }
@@ -106,15 +105,15 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     }
 
     @Override
-    protected BasePresenter getPresenter() {
-        return new MessagePresenter(this);
+    protected MessagePresenter getPresenter() {
+        return new MessagePresenter();
     }
 
     @Override
-    public void showMessages(List<VkMessage> answer) {
+    public void showData(List<MessageVM> answer) {
         DLog.i(TAG, "showMessages: answer" + answer);
-        if (!mVkMessages.isEmpty()) {answer.remove(0);}
-        mVkMessages.addAll(answer);
+        mMessages.clear();
+        mMessages.addAll(answer);
         mMessagesAdapter.notifyDataSetChanged();
     }
 
@@ -124,16 +123,14 @@ public class MessagesFragment extends BaseFragment implements IMessagesView {
     }
 
     @Override
-    public void addMessage(String messageText) {
-        VkMessage vkMessage = new VkMessage();
-        vkMessage.body = messageText;
-        vkMessage.out =1;
-        mVkMessages.add(0, vkMessage);
+    public void addMessage(MessageVM messageVM) {
+        mMessages.add(0, messageVM);
         mMessagesAdapter.notifyDataSetChanged();
         mEtText.setText("");
     }
 
     @Override
+
     public void showError(String errorText) {
         showErrorSnackbar(getView(), errorText);
     }

@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkUser;
-import com.dmbaryshev.vkschool.presenter.BasePresenter;
+import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.presenter.FriendsPresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
@@ -22,12 +21,12 @@ import com.dmbaryshev.vkschool.view.friends.adapter.FriendsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendsFragment extends BaseFragment implements IFriendsView, IHolderClick {
+public class FriendsFragment extends BaseFragment<FriendsPresenter> implements IFriendsView, IHolderClick {
     public static final String TAG = DLog.makeLogTag(FriendsFragment.class);
     private ProgressDialog mProgressDialog;
     private IFriendsFragmentListener mListener;
     private FriendsAdapter           mFriendsAdapter;
-    private List<VkUser>             mVkUsers;
+    private List<UserVM>             mVkUsers;
 
     public FriendsFragment() {
     }
@@ -45,8 +44,8 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
     }
 
     @Override
-    protected BasePresenter getPresenter() {
-        return new FriendsPresenter(this);
+    protected FriendsPresenter getPresenter() {
+        return new FriendsPresenter();
     }
 
     @Override
@@ -82,6 +81,7 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView(view);
+        mPresenter.bindView(this);
         mPresenter.load();
     }
 
@@ -126,13 +126,13 @@ public class FriendsFragment extends BaseFragment implements IFriendsView, IHold
                                               getActivity().getString(R.string.progress_dialog_message));    }
 
     @Override
-    public void showUsers(List<VkUser> answer) {
+    public void showData(List<UserVM> data) {
         mVkUsers.clear();
-        mVkUsers.addAll(answer);
+        mVkUsers.addAll(data);
         mFriendsAdapter.notifyDataSetChanged();
     }
 
     public interface IFriendsFragmentListener {
-        void openMessageFragment(VkUser id);
+        void openMessageFragment(UserVM userVM);
     }
 }

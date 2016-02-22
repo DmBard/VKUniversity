@@ -16,7 +16,7 @@ import android.view.MenuItem;
 
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.dto.VkAudio;
-import com.dmbaryshev.vkschool.model.dto.VkUser;
+import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.utils.DateTimeHelper;
 import com.dmbaryshev.vkschool.utils.PreferencesHelper;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = DLog.makeLogTag(MainActivity.class);
 
     private FragmentManager mManager;
-    private VkUser          mVkUser;
+    private UserVM          mVkUser;
     private DrawerLayout    mDrawer;
 
     @Override
@@ -106,8 +106,10 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(String.format("%s %s",
                                                          mVkUser.firstName,
                                                          mVkUser.lastName));
-            getSupportActionBar().setSubtitle("Last seen at " + DateTimeHelper.convertTimestampToString(
-                    mVkUser.lastSeen.time));
+            if (mVkUser.lastSeen != null) {
+                getSupportActionBar().setSubtitle("Last seen at " + DateTimeHelper.convertTimestampToString(
+                        mVkUser.lastSeen.time));
+            }
         } else if (tag.equals(FriendsFragment.TAG)) {
             getSupportActionBar().setTitle("Friends");
             getSupportActionBar().setSubtitle("");
@@ -133,9 +135,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void openMessageFragment(VkUser vkUser) {
-        mVkUser = vkUser;
-        replaceFragment(MessagesFragment.newInstance(vkUser.id), MessagesFragment.TAG, true);
+    public void openMessageFragment(UserVM userVM) {
+        mVkUser = userVM;
+        replaceFragment(MessagesFragment.newInstance(userVM.id), MessagesFragment.TAG, true);
     }
 
     @NonNull

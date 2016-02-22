@@ -40,11 +40,9 @@ public interface ApiService {
     Observable<Void> sendMessage(@Query ("user_id") int userId, @Query ("message") String message);
 
     @GET ("/method/audio.get")
-    Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("owner_id") int ownerId,
-                                                           @Query ("count") int count);
-
-    @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count);
+    @GET ("/method/audio.get")
+    Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count, @Query ("offset") int offset);
 
 
 }

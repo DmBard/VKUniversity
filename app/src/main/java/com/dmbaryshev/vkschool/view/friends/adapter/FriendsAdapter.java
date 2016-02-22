@@ -10,19 +10,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkUser;
-import com.dmbaryshev.vkschool.view.common.IHolderClick;
+import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.utils.DLog;
+import com.dmbaryshev.vkschool.view.common.IHolderClick;
 
 import java.util.List;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
     private static final String TAG = DLog.makeLogTag(FriendsAdapter.class);
-    private List<VkUser> items;
+    private List<UserVM> items;
     private Context      context;
     private IHolderClick mListener;
 
-    public FriendsAdapter(List<VkUser> items, IHolderClick listener) {
+    public FriendsAdapter(List<UserVM> items, IHolderClick listener) {
         if (items != null) {
             this.items = items;
             mListener = listener;
@@ -40,7 +40,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (items == null || items.size() <= 0) {return;}
 
-        final VkUser item = items.get(position);
+        final UserVM item = items.get(position);
         holder.tvName.setText(String.format("%s %s", item.firstName, item.lastName));
         holder.tvStatus.setText(item.online == 1 ? context.getString(R.string.status_online) : "");
         Glide.with(context).load(item.photo100).into(holder.ivAvatar);
@@ -53,7 +53,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHold
         } else { return 0; }
     }
 
-    public VkUser getUser(int adapterPosition) {
+    public UserVM getUser(int adapterPosition) {
         return items.get(adapterPosition);
     }
 

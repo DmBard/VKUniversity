@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VkMessage {
-    public static final int OUT = 1;
-    public static final int IN = 0;
-    
     @SerializedName ("id")
     @Expose
     public int id;
@@ -34,24 +31,4 @@ public class VkMessage {
     @SerializedName ("attachments")
     @Expose
     public List<VkAttachment> attachments = new ArrayList<>();
-
-    private String photo;
-
-
-    public String getPhoto() {
-        if (photo != null) {return photo;}
-        String photoUrl = null;
-        if (attachments == null || attachments.size() == 0) {return null;}
-        for (VkAttachment vkAttachment : attachments) {
-            if (!vkAttachment.type.equals("photo")) continue;
-            photoUrl = vkAttachment.photo.photo130;
-        }
-        photo = photoUrl;
-        return photoUrl;
-    }
-
-    @Override
-    public String toString() {
-        return "id = " + id;
-    }
 }

@@ -6,37 +6,42 @@ import com.dmbaryshev.vkschool.model.dto.common.VkError;
 import com.dmbaryshev.vkschool.model.dto.common.VkResponse;
 import com.dmbaryshev.vkschool.model.network.ErrorUtils;
 import com.dmbaryshev.vkschool.model.network.ResponseAnswer;
+import com.dmbaryshev.vkschool.model.repository.mapper.BaseMapper;
+import com.dmbaryshev.vkschool.model.view_model.IViewModel;
 import com.dmbaryshev.vkschool.utils.DLog;
 
 import java.util.List;
 
 import retrofit2.Response;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public abstract class BaseRepo<T> {
+public abstract class BaseRepo<V, VM extends IViewModel> {
     private static final String TAG = DLog.makeLogTag(BaseRepo.class);
+    protected BaseMapper<V, VM> mMapper;
 
     public BaseRepo() {
     }
 
-    protected Observable<ResponseAnswer<T>> getResponseAnswer(Observable<Response<CommonResponse<T>>> observable) {
-        return observable.map(this::initResponseAnswer);
+    protected Observable<ResponseAnswer<VM>> getResponseAnswer(Observable<Response<CommonResponse<V>>> observable) {
+        return observable.map(this::initResponseAnswer).cache();
     }
 
-    private ResponseAnswer<T> initResponseAnswer(Response<CommonResponse<T>> response) {
-        List<T> answer = null;
+    protected Observable<ResponseAnswer<VM>> getAutoloadedResponseAnswer(Observable<Response<CommonResponse<V>>> observable) {
+        return observable.map(this::initAutoloadedResponseAnswer).cache();
+    }
+
+    private ResponseAnswer<VM> initResponseAnswer(Response<CommonResponse<V>> response) {
+        List<V> answer = null;
         VkError vkError = null;
         if (response == null) {
             return null;
         }
-        CommonResponse<T> commonResponse = response.body();
+        CommonResponse<V> commonResponse = response.body();
         if (commonResponse == null) {
             return null;
         }
 
-        VkResponse vkResponse = commonResponse.mVkResponse;
+        VkResponse<V> vkResponse = commonResponse.mVkResponse;
         if (vkResponse == null) {
             CommonError commonError = ErrorUtils.parseError(response);
             vkError = commonError.mVkError;
@@ -44,6 +49,35 @@ public abstract class BaseRepo<T> {
             answer = vkResponse.items;
         }
 
-        return new ResponseAnswer<>(answer, vkError);
+        mMapper = initMapper();
+
+        return mMapper.execute(new ResponseAnswer<>(answer, vkError));
     }
+
+    private ResponseAnswer<VM> initAutoloadedResponseAnswer(Response<CommonResponse<V>> response) {
+        List<V> answer = null;
+        VkError vkError = null;
+        if (response == null) {
+            return null;
+        }
+        CommonResponse<V> commonResponse = response.body();
+        if (commonResponse == null) {
+            return null;
+        }
+
+        VkResponse<V> vkResponse = commonResponse.mVkResponse;
+        if (vkResponse == null) {
+            CommonError commonError = ErrorUtils.parseError(response);
+            vkError = commonError.mVkError;
+        } else {
+            answer = vkResponse.items;
+            answer.remove(0);
+        }
+
+        mMapper = initMapper();
+
+        return mMapper.execute(new ResponseAnswer<>(answer, vkError));
+    }
+
+    protected abstract BaseMapper<V, VM> initMapper();
 }

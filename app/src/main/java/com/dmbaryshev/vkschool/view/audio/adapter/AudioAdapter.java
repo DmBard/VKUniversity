@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkAudio;
+import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.utils.DateTimeHelper;
 import com.dmbaryshev.vkschool.view.common.IHolderClick;
@@ -17,11 +17,11 @@ import java.util.List;
 
 public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> {
     private static final String TAG = DLog.makeLogTag(AudioAdapter.class);
-    private List<VkAudio> items;
+    private List<AudioVM> items;
     private Context      context;
     private IHolderClick mListener;
 
-    public AudioAdapter(List<VkAudio> items, IHolderClick listener) {
+    public AudioAdapter(List<AudioVM> items, IHolderClick listener) {
         if (items != null) {
             this.items = items;
             mListener = listener;
@@ -39,7 +39,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (items == null || items.size() <= 0) {return;}
 
-        final VkAudio item = items.get(position);
+        final AudioVM item = items.get(position);
         holder.tvDuration.setText(DateTimeHelper.convertDurationToString(item.duration));
         holder.tvTrack.setText(item.title);
         holder.tvArtist.setText(item.artist);

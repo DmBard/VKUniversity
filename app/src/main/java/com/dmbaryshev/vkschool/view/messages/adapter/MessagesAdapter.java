@@ -10,17 +10,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkMessage;
+import com.dmbaryshev.vkschool.model.view_model.MessageVM;
 import com.dmbaryshev.vkschool.utils.DLog;
 
 import java.util.List;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
     private static final String TAG = DLog.makeLogTag(MessagesAdapter.class);
-    private List<VkMessage> items;
+    private List<MessageVM> items;
     private Context         context;
 
-    public MessagesAdapter(List<VkMessage> items) {
+    public MessagesAdapter(List<MessageVM> items) {
         this.items = items;
     }
 
@@ -66,7 +66,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             tvText = (TextView) view.findViewById(R.id.tv_text);
         }
 
-        public void bind(Context context, final VkMessage item) {
+        public void bind(Context context, final MessageVM item) {
             tvText.setText(item.body);
 
             if (item.getPhoto() == null) {

@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.dto.VkAudio;
+import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.presenter.AudioPresenter;
-import com.dmbaryshev.vkschool.presenter.BasePresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.audio.adapter.AudioAdapter;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
@@ -22,12 +22,13 @@ import com.dmbaryshev.vkschool.view.common.IHolderClick;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AudioFragment extends BaseFragment implements IAudioView, IHolderClick {
+public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudioView, IHolderClick {
     public static final String TAG = DLog.makeLogTag(AudioFragment.class);
     private ProgressDialog         mProgressDialog;
     private IAudioFragmentListener mListener;
     private AudioAdapter           mAudioAdapter;
-    private List<VkAudio>          mVkAudios;
+    private List<AudioVM>          mVkAudios;
+    private boolean mLoading = false;
 
     public AudioFragment() {
     }
@@ -37,8 +38,11 @@ public class AudioFragment extends BaseFragment implements IAudioView, IHolderCl
     }
 
     @Override
-    protected BasePresenter getPresenter() {
-        return new AudioPresenter(this);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initRecyclerView(view);
+        mPresenter.bindView(this);
+        mPresenter.load();
     }
 
     @Override
@@ -71,18 +75,34 @@ public class AudioFragment extends BaseFragment implements IAudioView, IHolderCl
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initRecyclerView(view);
-        mPresenter.load();
+    protected AudioPresenter getPresenter() {
+        return new AudioPresenter();
     }
 
     private void initRecyclerView(View view) {
         RecyclerView rvTracks = (RecyclerView) view.findViewById(R.id.rv_audio);
-        rvTracks.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        rvTracks.setLayoutManager(layoutManager);
         rvTracks.setHasFixedSize(false);
         rvTracks.setItemAnimator(new DefaultItemAnimator());
         rvTracks.setAdapter(mAudioAdapter);
+        rvTracks.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+
+                    if (!mLoading) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            mLoading = true;
+                            mPresenter.loadMore();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -127,9 +147,9 @@ public class AudioFragment extends BaseFragment implements IAudioView, IHolderCl
     }
 
     @Override
-    public void showAudio(List<VkAudio> answer) {
+    public void showData(List<AudioVM> data) {
         mVkAudios.clear();
-        mVkAudios.addAll(answer);
+        mVkAudios.addAll(data);
         mAudioAdapter.notifyDataSetChanged();
     }
 
