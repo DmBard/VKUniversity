@@ -14,4 +14,9 @@ public class AudioVM implements IViewModel {
         this.title = title;
         this.duration = duration;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d %s", id, title);
+    }
 }

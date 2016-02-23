@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/VKSchool.iml" filepath="$PROJECT_DIR$/VKSchool.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vkschool.iml" filepath="$PROJECT_DIR$/vkschool.iml" />
     </modules>
   </component>
 </project>

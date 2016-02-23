@@ -22,33 +22,20 @@ public class MessageRepo extends BaseRepo<VkMessage, MessageVM> {
                         .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseAnswer<MessageVM>> getMessages(int userId, int messagesCount) {
+    public Observable<ResponseAnswer<MessageVM>> getMessages(int userId,
+                                                             int messagesCount,
+                                                             int offset) {
         Observable<Response<CommonResponse<VkMessage>>> observable = ApiHelper.createService()
                                                                               .getMessageHistory(
                                                                                       userId,
-                                                                                      messagesCount)
+                                                                                      messagesCount,
+                                                                                      offset)
                                                                               .subscribeOn(
                                                                                       Schedulers.io())
                                                                               .observeOn(
                                                                                       AndroidSchedulers
                                                                                               .mainThread());
         return getResponseAnswer(observable);
-    }
-
-    public Observable<ResponseAnswer<MessageVM>> getMessages(int userId,
-                                                             int messagesCount,
-                                                             int messageId) {
-        Observable<Response<CommonResponse<VkMessage>>> observable = ApiHelper.createService()
-                                                                              .getMessageHistory(
-                                                                                      userId,
-                                                                                      messagesCount,
-                                                                                      messageId)
-                                                                              .subscribeOn(
-                                                                                      Schedulers.io())
-                                                                              .observeOn(
-                                                                                      AndroidSchedulers
-                                                                                              .mainThread());
-        return getAutoloadedResponseAnswer(observable);
     }
 
     @Override

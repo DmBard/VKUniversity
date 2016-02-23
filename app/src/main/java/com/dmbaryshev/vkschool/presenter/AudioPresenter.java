@@ -14,19 +14,20 @@ import rx.Subscription;
 public class AudioPresenter extends BasePresenter<IAudioView, AudioVM> {
     private static final int TRACKS_COUNT = 30;
     private              int mOffset      = 0;
+    private AudioRepo mAudioRepo = new AudioRepo();
 
     @Override
     protected Observable<ResponseAnswer<AudioVM>> initObservable() {
-        AudioRepo audioRepo = new AudioRepo();
-        Observable<ResponseAnswer<AudioVM>> observable = audioRepo.getAudio(TRACKS_COUNT, mOffset);
-        mOffset = mOffset + TRACKS_COUNT;
+        Observable<ResponseAnswer<AudioVM>> observable = mAudioRepo.getAudio(TRACKS_COUNT, mOffset);
+        mOffset += TRACKS_COUNT;
         return observable;
     }
 
     public void loadMore() {
         if (NetworkHelper.isOnline()) {
             mView.startLoad();
-            Observable<ResponseAnswer<AudioVM>> observable = initObservable();
+            Observable<ResponseAnswer<AudioVM>> observable = mAudioRepo.getAudio(TRACKS_COUNT, mOffset);
+            mOffset += TRACKS_COUNT;
             Subscription subscription = observable.subscribe(answer->super.showData(answer));
             addSubscription(subscription);
         } else { mView.showError(R.string.error_network_unavailable); }

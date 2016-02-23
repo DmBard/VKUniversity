@@ -30,7 +30,7 @@ public interface ApiService {
     @GET ("/method/messages.getHistory")
     Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
                                                                       @Query ("count") int count,
-                                                                      @Query ("start_message_id") int startMessageId);
+                                                                      @Query ("offset") int offset);
 
     @GET ("/method/messages.getHistory")
     Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,

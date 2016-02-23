@@ -136,6 +136,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
     @Override
     public void stopLoad() {
         dismissProgressDialog();
+        mLoading = false;
     }
 
     @Override
