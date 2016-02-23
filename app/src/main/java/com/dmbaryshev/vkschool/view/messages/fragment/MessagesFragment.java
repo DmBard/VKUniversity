@@ -21,7 +21,7 @@ import com.dmbaryshev.vkschool.view.messages.adapter.MessagesAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMessagesView {
+public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMessageView {
     public static final String TAG = DLog.makeLogTag(MessagesFragment.class);
 
     private static final String KEY_ID_USER = "ID_USER";
@@ -79,24 +79,18 @@ public class MessagesFragment extends BaseFragment<MessagePresenter> implements 
         rvMessages.setHasFixedSize(true);
         rvMessages.setItemAnimator(new DefaultItemAnimator());
         rvMessages.setAdapter(mMessagesAdapter);
-        rvMessages.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
+        rvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if(dy < 0)
-                {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy < 0) {
                     int visibleItemCount = layoutManager.getChildCount();
                     int totalItemCount = layoutManager.getItemCount();
                     int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
 
-                    if (!mLoading)
-                    {
-                        if ( (visibleItemCount + pastVisibleItems) >= totalItemCount)
-                        {
+                    if (!mLoading) {
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                             mLoading = true;
-                            int lastMessageId = mMessages.get(mMessages.size() - 1).id;
-                            mPresenter.load(lastMessageId);
+                            mPresenter.loadMore();
                         }
                     }
                 }

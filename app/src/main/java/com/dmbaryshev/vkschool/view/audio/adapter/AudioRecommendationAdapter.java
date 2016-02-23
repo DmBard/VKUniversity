@@ -15,12 +15,12 @@ import com.dmbaryshev.vkschool.view.common.IHolderClick;
 
 import java.util.List;
 
-public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> {
+public class AudioRecommendationAdapter extends RecyclerView.Adapter<AudioRecommendationAdapter.ViewHolder> {
     private static final String TAG = DLog.makeLogTag(AudioAdapter.class);
     private List<AudioVM> items;
     private IHolderClick mListener;
 
-    public AudioAdapter(List<AudioVM> items, IHolderClick listener) {
+    public AudioRecommendationAdapter(List<AudioVM> items, IHolderClick listener) {
         if (items != null) {
             this.items = items;
             mListener = listener;
@@ -30,6 +30,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+        // TODO: 23.02.2016 change layout
         View view = LayoutInflater.from(context).inflate(R.layout.item_audio, parent, false);
         return new ViewHolder(view, mListener);
     }
@@ -51,14 +52,10 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> 
         } else { return 0; }
     }
 
-    public AudioVM getItem(int adapterPosition) {
-        return items.get(adapterPosition);
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView     tvDuration;
-        protected TextView     tvArtist;
-        protected TextView     tvTrack;
+        protected TextView tvDuration;
+        protected TextView tvArtist;
+        protected TextView tvTrack;
         protected IHolderClick listener;
 
         public ViewHolder(View view, final IHolderClick listener) {
@@ -67,7 +64,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.ViewHolder> 
             tvTrack = (TextView) view.findViewById(R.id.tv_track);
             tvArtist = (TextView) view.findViewById(R.id.tv_artist);
             this.listener = listener;
-            view.setOnClickListener(v->listener.onItemClick(getAdapterPosition()));
+            view.setOnClickListener(v -> listener.onItemClick(getAdapterPosition()));
         }
     }
 }

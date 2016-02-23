@@ -16,11 +16,13 @@ import android.view.MenuItem;
 
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.dto.VkAudio;
+import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.utils.DateTimeHelper;
 import com.dmbaryshev.vkschool.utils.PreferencesHelper;
 import com.dmbaryshev.vkschool.view.audio.fragment.AudioFragment;
+import com.dmbaryshev.vkschool.view.audio.fragment.AudioRecommendationFragment;
 import com.dmbaryshev.vkschool.view.friends.fragment.FriendsFragment;
 import com.dmbaryshev.vkschool.view.messages.fragment.MessagesFragment;
 import com.vk.sdk.VKAccessToken;
@@ -32,12 +34,13 @@ import com.vk.sdk.api.VKError;
 public class MainActivity extends AppCompatActivity
         implements FriendsFragment.IFriendsFragmentListener,
                    NavigationView.OnNavigationItemSelectedListener,
-                   AudioFragment.IAudioFragmentListener {
+                   AudioFragment.IAudioFragmentListener,
+                   AudioRecommendationFragment.IAudioRecommendationFragmentListener {
     private static final String TAG = DLog.makeLogTag(MainActivity.class);
 
     private FragmentManager mManager;
-    private UserVM          mVkUser;
-    private DrawerLayout    mDrawer;
+    private UserVM mVkUser;
+    private DrawerLayout mDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +85,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void openFriendsFragment() {
-        //        if (getCurrentFragmentTag() != null && getCurrentFragmentTag().equals(FriendsFragment.TAG)) {
-        //            return;
-        //        }
-        replaceFragment(FriendsFragment.newInstance(), FriendsFragment.TAG, true);
+        replaceFragment(FriendsFragment.newInstance(), FriendsFragment.TAG, false);
     }
 
     private void replaceFragment(Fragment fragment, String tag, boolean backstack) {
@@ -129,15 +129,9 @@ public class MainActivity extends AppCompatActivity
                                        Intent data,
                                        final PreferencesHelper preferencesHelper) {
         return VKSdk.onActivityResult(requestCode,
-                                       resultCode,
-                                       data,
-                                       getVkCallback(preferencesHelper));
-    }
-
-    @Override
-    public void openMessageFragment(UserVM userVM) {
-        mVkUser = userVM;
-        replaceFragment(MessagesFragment.newInstance(userVM.id), MessagesFragment.TAG, true);
+                                      resultCode,
+                                      data,
+                                      getVkCallback(preferencesHelper));
     }
 
     @NonNull
@@ -182,11 +176,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void openMessageFragment(UserVM userVM) {
+        mVkUser = userVM;
+        replaceFragment(MessagesFragment.newInstance(userVM.id), MessagesFragment.TAG, true);
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_friends:
-                openFriendsFragment();
+                openFriendsFragment(false);
                 break;
             case R.id.nav_audio:
                 openAudioFragment();
@@ -197,12 +197,21 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void openFriendsFragment(boolean backstack) {
+        replaceFragment(AudioFragment.newInstance(), AudioFragment.TAG, backstack);
+    }
+
     private void openAudioFragment() {
-        replaceFragment(AudioFragment.newInstance(), AudioFragment.TAG, true);
+        replaceFragment(AudioFragment.newInstance(), AudioFragment.TAG, false);
     }
 
     @Override
     public void openRecommendationsAudioFragment(VkAudio vkAudio) {
 
+    }
+
+    @Override
+    public void openRecommendationsAudioFragment(AudioVM audioVM) {
+        replaceFragment(AudioRecommendationFragment.newInstance(audioVM), AudioRecommendationFragment.TAG, true);
     }
 }

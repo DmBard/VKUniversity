@@ -30,7 +30,7 @@ public interface ApiService {
     @GET ("/method/messages.getHistory")
     Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
                                                                       @Query ("count") int count,
-                                                                      @Query ("start_message_id") int startMessageId);
+                                                                      @Query ("offset") int offset);
 
     @GET ("/method/messages.getHistory")
     Observable<Response<CommonResponse<VkMessage>>> getMessageHistory(@Query ("user_id") int userId,
@@ -41,8 +41,12 @@ public interface ApiService {
 
     @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count);
+
     @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count, @Query ("offset") int offset);
+
+    @GET ("/method/audio.getRecommendations")
+    Observable<Response<CommonResponse<VkAudio>>> getAudioRecommendation(@Query ("target_audio") String targetAudio, @Query ("count") int count, @Query ("offset") int offset);
 
 
 }

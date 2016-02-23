@@ -26,10 +26,6 @@ public abstract class BaseRepo<V, VM extends IViewModel> {
         return observable.map(this::initResponseAnswer).cache();
     }
 
-    protected Observable<ResponseAnswer<VM>> getAutoloadedResponseAnswer(Observable<Response<CommonResponse<V>>> observable) {
-        return observable.map(this::initAutoloadedResponseAnswer).cache();
-    }
-
     private ResponseAnswer<VM> initResponseAnswer(Response<CommonResponse<V>> response) {
         List<V> answer = null;
         VkError vkError = null;
@@ -47,31 +43,6 @@ public abstract class BaseRepo<V, VM extends IViewModel> {
             vkError = commonError.mVkError;
         } else {
             answer = vkResponse.items;
-        }
-
-        mMapper = initMapper();
-
-        return mMapper.execute(new ResponseAnswer<>(answer, vkError));
-    }
-
-    private ResponseAnswer<VM> initAutoloadedResponseAnswer(Response<CommonResponse<V>> response) {
-        List<V> answer = null;
-        VkError vkError = null;
-        if (response == null) {
-            return null;
-        }
-        CommonResponse<V> commonResponse = response.body();
-        if (commonResponse == null) {
-            return null;
-        }
-
-        VkResponse<V> vkResponse = commonResponse.mVkResponse;
-        if (vkResponse == null) {
-            CommonError commonError = ErrorUtils.parseError(response);
-            vkError = commonError.mVkError;
-        } else {
-            answer = vkResponse.items;
-            answer.remove(0);
         }
 
         mMapper = initMapper();
