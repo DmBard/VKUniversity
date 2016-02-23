@@ -41,8 +41,12 @@ public interface ApiService {
 
     @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count);
+
     @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count, @Query ("offset") int offset);
+
+    @GET ("/method/audio.getRecommendations")
+    Observable<Response<CommonResponse<VkAudio>>> getAudioRecommendation(@Query ("target_audio") String targetAudio, @Query ("count") int count, @Query ("offset") int offset);
 
 
 }

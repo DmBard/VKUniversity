@@ -1,6 +1,10 @@
 package com.dmbaryshev.vkschool.model.view_model;
 
-public class AudioVM implements IViewModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+
+public class AudioVM implements IViewModel, Parcelable {
     public int id;
     public int ownerId;
     public String artist;
@@ -14,6 +18,40 @@ public class AudioVM implements IViewModel {
         this.title = title;
         this.duration = duration;
     }
+
+    protected AudioVM(Parcel in) {
+        id = in.readInt();
+        ownerId = in.readInt();
+        artist = in.readString();
+        title = in.readString();
+        duration = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel out, int flags) {
+        out.writeInt(id);
+        out.writeInt(ownerId);
+        out.writeString(artist);
+        out.writeString(title);
+        out.writeInt(duration);
+    }
+
+    public static final Creator<AudioVM> CREATOR = new Creator<AudioVM>() {
+        @Override
+        public AudioVM createFromParcel(Parcel in) {
+            return new AudioVM(in);
+        }
+
+        @Override
+        public AudioVM[] newArray(int size) {
+            return new AudioVM[size];
+        }
+    };
 
     @Override
     public String toString() {

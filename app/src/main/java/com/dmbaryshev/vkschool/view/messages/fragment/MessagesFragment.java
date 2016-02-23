@@ -21,7 +21,7 @@ import com.dmbaryshev.vkschool.view.messages.adapter.MessagesAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMesView {
+public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMessageView {
     public static final String TAG = DLog.makeLogTag(MessagesFragment.class);
 
     private static final String KEY_ID_USER = "ID_USER";

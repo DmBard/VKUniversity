@@ -11,42 +11,49 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmbaryshev.vkschool.R;
+import com.dmbaryshev.vkschool.model.dto.VkAudio;
 import com.dmbaryshev.vkschool.model.view_model.AudioVM;
-import com.dmbaryshev.vkschool.presenter.AudioPresenter;
+import com.dmbaryshev.vkschool.presenter.AudioRecommendationPresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
-import com.dmbaryshev.vkschool.view.audio.adapter.AudioAdapter;
+import com.dmbaryshev.vkschool.view.audio.adapter.AudioRecommendationAdapter;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
 import com.dmbaryshev.vkschool.view.common.IHolderClick;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudioView,
-                                                                           IHolderClick {
-    public static final String TAG = DLog.makeLogTag(AudioFragment.class);
+public class AudioRecommendationFragment extends BaseFragment<AudioRecommendationPresenter> implements
+                                                                                            IAudioRecommendationView,
+                                                                                            IHolderClick {
+    public static final String TAG = DLog.makeLogTag(AudioRecommendationFragment.class);
+    public static final String KEY_AUDIO = "com.dmbaryshev.vkschool.view.audio.fragment.KEY_AUDIO";
     private ProgressDialog mProgressDialog;
-    private IAudioFragmentListener mListener;
-    private AudioAdapter mAudioAdapter;
+    private IAudioRecommendationFragmentListener mListener;
+    private AudioRecommendationAdapter mAudioAdapter;
     private List<AudioVM> mVkAudios;
     private boolean mLoading = false;
 
-    public AudioFragment() {
+    public AudioRecommendationFragment() {
     }
 
-    public static AudioFragment newInstance() {
-        return new AudioFragment();
+    public static AudioRecommendationFragment newInstance(AudioVM audioVM) {
+        Bundle args = new Bundle();
+        args.putParcelable(KEY_AUDIO, audioVM);
+        AudioRecommendationFragment fragment = new AudioRecommendationFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onItemClick(int adapterPosition) {
-        mListener.openRecommendationsAudioFragment(mAudioAdapter.getItem(adapterPosition));
+        //        mListener.openMessageFragment(mAudioAdapter.getUser(adapterPosition));
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (IAudioFragmentListener) activity;
+            mListener = (IAudioRecommendationFragmentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement FragmentButtonListener");
         }
@@ -69,7 +76,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mVkAudios = new ArrayList<>();
-        mAudioAdapter = new AudioAdapter(mVkAudios, this);
+        mAudioAdapter = new AudioRecommendationAdapter(mVkAudios, this);
     }
 
     @Override
@@ -77,6 +84,13 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView(view);
         mPresenter.bindView(this);
+
+        Bundle bundle = getArguments();
+        AudioVM audioVM = null;
+        if (bundle != null) {
+            audioVM = bundle.getParcelable(KEY_AUDIO);
+        }
+        mPresenter.setTargetAudio(audioVM);
         mPresenter.load();
     }
 
@@ -113,8 +127,8 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
     }
 
     @Override
-    protected AudioPresenter getPresenter() {
-        return new AudioPresenter();
+    protected AudioRecommendationPresenter getPresenter() {
+        return new AudioRecommendationPresenter();
     }
 
     private void dismissProgressDialog() {
@@ -154,7 +168,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
         mAudioAdapter.notifyDataSetChanged();
     }
 
-    public interface IAudioFragmentListener {
-        void openRecommendationsAudioFragment(AudioVM audioVM);
+    public interface IAudioRecommendationFragmentListener {
+        void openRecommendationsAudioFragment(VkAudio vkAudio);
     }
 }

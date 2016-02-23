@@ -6,12 +6,12 @@ import com.dmbaryshev.vkschool.model.repository.MessageRepo;
 import com.dmbaryshev.vkschool.model.view_model.MessageVM;
 import com.dmbaryshev.vkschool.presenter.common.BasePresenter;
 import com.dmbaryshev.vkschool.utils.NetworkHelper;
-import com.dmbaryshev.vkschool.view.messages.fragment.IMesView;
+import com.dmbaryshev.vkschool.view.messages.fragment.IMessageView;
 
 import rx.Observable;
 import rx.Subscription;
 
-public class MessagePresenter extends BasePresenter<IMesView, MessageVM> {
+public class MessagePresenter extends BasePresenter<IMessageView, MessageVM> {
     private static final int MESSAGES_COUNT = 20;
     private MessageRepo mMessageRepo = new MessageRepo();
     private int mOffset = 0;

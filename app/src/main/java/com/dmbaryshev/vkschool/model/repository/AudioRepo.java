@@ -24,6 +24,21 @@ public class AudioRepo extends BaseRepo<VkAudio, AudioVM> {
         return getResponseAnswer(observable);
     }
 
+    public Observable<ResponseAnswer<AudioVM>> getAudioRecommendation(String targetAudio,
+                                                                      int count,
+                                                                      int offset) {
+        Observable<Response<CommonResponse<VkAudio>>> observable = ApiHelper.createService()
+                                                                            .getAudioRecommendation(
+                                                                                    targetAudio,
+                                                                                    count,
+                                                                                    offset)
+                                                                            .subscribeOn(Schedulers.io())
+                                                                            .observeOn(
+                                                                                    AndroidSchedulers
+                                                                                            .mainThread());
+        return getResponseAnswer(observable);
+    }
+
     @Override
     protected BaseMapper<VkAudio, AudioVM> initMapper() {
         return new AudioMapper();
