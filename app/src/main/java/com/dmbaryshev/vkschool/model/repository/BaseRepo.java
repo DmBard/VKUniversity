@@ -23,10 +23,11 @@ public abstract class BaseRepo<V, VM extends IViewModel> {
     }
 
     protected Observable<ResponseAnswer<VM>> getResponseAnswer(Observable<Response<CommonResponse<V>>> observable) {
-        return observable.map(this::initResponseAnswer).cache();
+        return observable.map(this::initResponseAnswer);
     }
 
     private ResponseAnswer<VM> initResponseAnswer(Response<CommonResponse<V>> response) {
+        int count = 0;
         List<V> answer = null;
         VkError vkError = null;
         if (response == null) {
@@ -42,12 +43,13 @@ public abstract class BaseRepo<V, VM extends IViewModel> {
             CommonError commonError = ErrorUtils.parseError(response);
             vkError = commonError.mVkError;
         } else {
+            count = vkResponse.count;
             answer = vkResponse.items;
         }
 
         mMapper = initMapper();
 
-        return mMapper.execute(new ResponseAnswer<>(answer, vkError));
+        return mMapper.execute(new ResponseAnswer<>(count, answer, vkError));
     }
 
     protected abstract BaseMapper<V, VM> initMapper();

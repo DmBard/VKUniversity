@@ -11,20 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkAudio;
 import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.presenter.AudioRecommendationPresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.audio.adapter.AudioRecommendationAdapter;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
-import com.dmbaryshev.vkschool.view.common.IHolderClick;
+import com.dmbaryshev.vkschool.view.common.ICommonFragmentCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AudioRecommendationFragment extends BaseFragment<AudioRecommendationPresenter> implements
                                                                                             IAudioRecommendationView,
-                                                                                            IHolderClick {
+                                                                                            AudioRecommendationAdapter.IAudioRecomAdapterClickListener {
     public static final String TAG = DLog.makeLogTag(AudioRecommendationFragment.class);
     public static final String KEY_AUDIO = "com.dmbaryshev.vkschool.view.audio.fragment.KEY_AUDIO";
     private ProgressDialog mProgressDialog;
@@ -46,7 +45,7 @@ public class AudioRecommendationFragment extends BaseFragment<AudioRecommendatio
 
     @Override
     public void onItemClick(int adapterPosition) {
-        //        mListener.openMessageFragment(mAudioAdapter.getUser(adapterPosition));
+        mAudioAdapter.showAdditionBar(adapterPosition);
     }
 
     @Override
@@ -83,8 +82,8 @@ public class AudioRecommendationFragment extends BaseFragment<AudioRecommendatio
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView(view);
+        mListener.showTitle(getString(R.string.fragment_title_recommendation));
         mPresenter.bindView(this);
-
         Bundle bundle = getArguments();
         AudioVM audioVM = null;
         if (bundle != null) {
@@ -168,7 +167,28 @@ public class AudioRecommendationFragment extends BaseFragment<AudioRecommendatio
         mAudioAdapter.notifyDataSetChanged();
     }
 
-    public interface IAudioRecommendationFragmentListener {
-        void openRecommendationsAudioFragment(VkAudio vkAudio);
+    @Override
+    public void showCount(int count) {
+        if (count == 0) {
+            mListener.showSubtitle("");
+            return;
+        }
+        mListener.showSubtitle("" + count + " " + getResources().getQuantityString(R.plurals.track_count,
+                                                                                   count));
+    }
+
+    @Override
+    public void onPlayClick(int position) {
+        //        start service
+    }
+
+    @Override
+    public void onAddClick(int position) {
+        mPresenter.addAudio(mAudioAdapter.getItem(position));
+        mListener.onAudioAdded();
+    }
+
+    public interface IAudioRecommendationFragmentListener extends ICommonFragmentCallback {
+        void onAudioAdded();
     }
 }

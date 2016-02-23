@@ -39,8 +39,8 @@ public interface ApiService {
     @POST ("/method/messages.send")
     Observable<Void> sendMessage(@Query ("user_id") int userId, @Query ("message") String message);
 
-    @GET ("/method/audio.get")
-    Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count);
+    @POST ("/method/audio.add")
+    Observable<Void> addAudio(@Query ("audio_id") int audioId, @Query ("owner_id") int ownerId);
 
     @GET ("/method/audio.get")
     Observable<Response<CommonResponse<VkAudio>>> getAudio(@Query ("count") int count, @Query ("offset") int offset);

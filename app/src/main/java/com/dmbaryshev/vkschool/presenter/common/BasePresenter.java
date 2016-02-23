@@ -9,12 +9,9 @@ import com.dmbaryshev.vkschool.utils.NetworkHelper;
 import com.dmbaryshev.vkschool.view.IView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import rx.Observable;
 import rx.Subscription;
@@ -24,7 +21,7 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
     private static final String TAG = DLog.makeLogTag(BasePresenter.class);
     protected T mView;
     protected Set<VM> mMissedAnswerSet = new LinkedHashSet<>();
-    protected List<VM> mMissedAnswerList = new ArrayList<>();
+    protected List<VM> mMissedAnswerList;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     protected Observable<ResponseAnswer<VM>> mObservable;
 
@@ -41,7 +38,7 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
             mMissedAnswerList.clear();
             mMissedAnswerList.addAll(mMissedAnswerSet);
             DLog.i(TAG,
-                   "showData: missed size = " + mMissedAnswerSet.size());
+                   "showData: missed list size = " + mMissedAnswerSet.size());
 
         }
 
@@ -52,9 +49,13 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
             mView.showError(R.string.error_common);
             return;
         }
-
+        int count = data.getCount();
         VkError vkError = data.getVkError();
         List<VM> answer = data.getAnswer();
+
+        if (count != 0) {
+            mView.showCount(count);
+        }
 
         if (vkError != null) {
             mView.showError(vkError.errorMsg);
@@ -81,13 +82,22 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
     }
 
     public void load() {
+        load(false);
+    }
+
+    protected void load(boolean force) {
         if (NetworkHelper.isOnline()) {
-            mView.startLoad();
-            if (mObservable == null) {
-                mObservable = initObservable();
+            if (mMissedAnswerList == null || force) {
+                mView.startLoad();
+                if(mMissedAnswerList == null) mMissedAnswerList = new ArrayList<>();
+                if (mObservable == null)  mObservable = initObservable();
+                if (force) {
+                    mObservable = null;
+                    mObservable = initObservable();
+                }
+                Subscription subscription = mObservable.subscribe(this::showData);
+                addSubscription(subscription);
             }
-            Subscription subscription = mObservable.subscribe(this::showData);
-            addSubscription(subscription);
         } else { mView.showError(R.string.error_network_unavailable); }
     }
 

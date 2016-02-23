@@ -43,11 +43,11 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_play"/>
         <ImageView
-            android:id="@+id/iv_recommendation"
+            android:id="@+id/iv_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:src="@mipmap/ic_recommendation"
+            android:src="@mipmap/ic_add"
             />
     </FrameLayout>
 </LinearLayout>

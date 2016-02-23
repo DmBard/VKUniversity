@@ -15,11 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.dmbaryshev.vkschool.R;
-import com.dmbaryshev.vkschool.model.dto.VkAudio;
 import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.utils.DLog;
-import com.dmbaryshev.vkschool.utils.DateTimeHelper;
 import com.dmbaryshev.vkschool.utils.PreferencesHelper;
 import com.dmbaryshev.vkschool.view.audio.fragment.AudioFragment;
 import com.dmbaryshev.vkschool.view.audio.fragment.AudioRecommendationFragment;
@@ -34,12 +32,11 @@ import com.vk.sdk.api.VKError;
 public class MainActivity extends AppCompatActivity
         implements FriendsFragment.IFriendsFragmentListener,
                    NavigationView.OnNavigationItemSelectedListener,
-                   AudioFragment.IAudioFragmentListener,
+                   AudioFragment.IAudioFragmentCallback,
                    AudioRecommendationFragment.IAudioRecommendationFragmentListener {
     private static final String TAG = DLog.makeLogTag(MainActivity.class);
 
     private FragmentManager mManager;
-    private UserVM mVkUser;
     private DrawerLayout mDrawer;
 
     @Override
@@ -93,27 +90,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.container, fragment, tag);
         if (backstack) { fragmentTransaction.addToBackStack(null); }
         fragmentTransaction.commit();
-        setToolbarTitle(tag);
-    }
-
-    private void setToolbarTitle(String tag) {
-        if (tag == null) {
-            getSupportActionBar().setTitle("Friends");
-            getSupportActionBar().setSubtitle("");
-            return;
-        }
-        if (tag.equals(MessagesFragment.TAG)) {
-            getSupportActionBar().setTitle(String.format("%s %s",
-                                                         mVkUser.firstName,
-                                                         mVkUser.lastName));
-            if (mVkUser.lastSeen != null) {
-                getSupportActionBar().setSubtitle("Last seen at " + DateTimeHelper.convertTimestampToString(
-                        mVkUser.lastSeen.time));
-            }
-        } else if (tag.equals(FriendsFragment.TAG)) {
-            getSupportActionBar().setTitle("Friends");
-            getSupportActionBar().setSubtitle("");
-        }
     }
 
     @Override
@@ -161,9 +137,7 @@ public class MainActivity extends AppCompatActivity
             if (count == 0) {
                 super.onBackPressed();
             } else {
-                String tag = getCurrentFragmentTag();
                 getFragmentManager().popBackStack();
-                setToolbarTitle(tag);
             }
         }
     }
@@ -177,8 +151,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void openMessageFragment(UserVM userVM) {
-        mVkUser = userVM;
-        replaceFragment(MessagesFragment.newInstance(userVM.id), MessagesFragment.TAG, true);
+        replaceFragment(MessagesFragment.newInstance(userVM), MessagesFragment.TAG, true);
     }
 
     @Override
@@ -206,12 +179,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void openRecommendationsAudioFragment(VkAudio vkAudio) {
+    public void openRecommendationsAudioFragment(AudioVM audioVM) {
+        replaceFragment(AudioRecommendationFragment.newInstance(audioVM), AudioRecommendationFragment.TAG, true);
+    }
+
+    @Override
+    public void onAudioAdded() {
 
     }
 
     @Override
-    public void openRecommendationsAudioFragment(AudioVM audioVM) {
-        replaceFragment(AudioRecommendationFragment.newInstance(audioVM), AudioRecommendationFragment.TAG, true);
+    public void showTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void showSubtitle(String subtitle) {
+        getSupportActionBar().setSubtitle(subtitle);
     }
 }

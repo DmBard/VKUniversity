@@ -15,6 +15,7 @@ import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.presenter.FriendsPresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
+import com.dmbaryshev.vkschool.view.common.ICommonFragmentCallback;
 import com.dmbaryshev.vkschool.view.common.IHolderClick;
 import com.dmbaryshev.vkschool.view.friends.adapter.FriendsAdapter;
 
@@ -81,6 +82,8 @@ public class FriendsFragment extends BaseFragment<FriendsPresenter> implements I
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView(view);
+        mListener.showTitle(getString(R.string.fragment_title_friends));
+        mListener.showSubtitle("");
         mPresenter.bindView(this);
         mPresenter.load();
     }
@@ -132,7 +135,12 @@ public class FriendsFragment extends BaseFragment<FriendsPresenter> implements I
         mFriendsAdapter.notifyDataSetChanged();
     }
 
-    public interface IFriendsFragmentListener {
+    @Override
+    public void showCount(int count) {
+
+    }
+
+    public interface IFriendsFragmentListener extends ICommonFragmentCallback {
         void openMessageFragment(UserVM userVM);
     }
 }

@@ -1,11 +1,9 @@
 package com.dmbaryshev.vkschool.presenter;
 
-import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.network.ResponseAnswer;
 import com.dmbaryshev.vkschool.model.repository.AudioRepo;
 import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 import com.dmbaryshev.vkschool.presenter.common.BasePresenter;
-import com.dmbaryshev.vkschool.utils.NetworkHelper;
 import com.dmbaryshev.vkschool.view.audio.fragment.IAudioRecommendationView;
 
 import rx.Observable;
@@ -15,13 +13,13 @@ public class AudioRecommendationPresenter extends BasePresenter<IAudioRecommenda
     private static final int TRACKS_COUNT = 30;
     private int mOffset = 0;
     private AudioRepo mAudioRepo = new AudioRepo();
-    private String mTargetAudio;
-    private AudioVM mAudioVM;
+    private String  mTargetAudio;
+    private AudioVM mTargetAudioVM;
 
     @Override
     protected Observable<ResponseAnswer<AudioVM>> initObservable() {
-        if (mAudioVM != null) {
-            mTargetAudio = String.format("%d_%d", mAudioVM.ownerId, mAudioVM.id);
+        if (mTargetAudioVM != null) {
+            mTargetAudio = String.format("%d_%d", mTargetAudioVM.ownerId, mTargetAudioVM.id);
         }
         Observable<ResponseAnswer<AudioVM>> observable = mAudioRepo.getAudioRecommendation(
                 mTargetAudio,
@@ -32,19 +30,16 @@ public class AudioRecommendationPresenter extends BasePresenter<IAudioRecommenda
     }
 
     public void loadMore() {
-        if (NetworkHelper.isOnline()) {
-            mView.startLoad();
-            Observable<ResponseAnswer<AudioVM>> observable = mAudioRepo.getAudioRecommendation(
-                    mTargetAudio,
-                    TRACKS_COUNT,
-                    mOffset);
-            mOffset += TRACKS_COUNT;
-            Subscription subscription = observable.subscribe(answer -> super.showData(answer));
-            addSubscription(subscription);
-        } else { mView.showError(R.string.error_network_unavailable); }
+        load(true);
+        mOffset += TRACKS_COUNT;
     }
 
     public void setTargetAudio(AudioVM audioVM) {
-        mAudioVM = audioVM;
+        mTargetAudioVM = audioVM;
+    }
+
+    public void addAudio(AudioVM audioVM) {
+        Subscription subscription = mAudioRepo.addAudio(audioVM.id, audioVM.ownerId).subscribe();
+        addSubscription(subscription);
     }
 }

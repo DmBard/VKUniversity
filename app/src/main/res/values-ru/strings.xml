@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VKUniversity</string>
+    <string name="action_settings">Настройки</string>
+    <string name="error.common">Что-то пошло не так</string>
+    <string name="error.network.unavailable">Сеть недоступна</string>
+    <string name="message_button_text_send">Отправить</string>
+    <string name="progress.dialog.message">Уже почти</string>
+    <string name="progress.dialog.title">Загрузка</string>
+    <string name="snackbar.button.text.retry">Повторить</string>
+
+    <plurals name="track_count">
+        <item quantity="zero"/>
+        <item quantity="one">трэк</item>
+        <item quantity="two">трэка</item>
+        <item quantity="few">трэка</item>
+        <item quantity="many">трэков</item>
+        <item quantity="other">трэков</item>
+    </plurals>
+    <string name="fragment.title.audio">Музыка</string>
+    <string name="fragment.title.friends">Друзья</string>
+    <string name="fragment.title.recommendation">Рекоммендации</string>
+    <string name="fragment.subtitle.message">Был онлайн</string>
+</resources>

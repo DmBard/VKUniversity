@@ -14,5 +14,7 @@ public interface IView<T extends IViewModel> {
     void startLoad();
 
     void showData(List<T> data);
+
+    void showCount(int count);
 }
 

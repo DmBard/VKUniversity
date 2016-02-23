@@ -1,5 +1,6 @@
 package com.dmbaryshev.vkschool.view.messages.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,9 +14,12 @@ import android.widget.ProgressBar;
 
 import com.dmbaryshev.vkschool.R;
 import com.dmbaryshev.vkschool.model.view_model.MessageVM;
+import com.dmbaryshev.vkschool.model.view_model.UserVM;
 import com.dmbaryshev.vkschool.presenter.MessagePresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
+import com.dmbaryshev.vkschool.utils.DateTimeHelper;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
+import com.dmbaryshev.vkschool.view.common.ICommonFragmentCallback;
 import com.dmbaryshev.vkschool.view.messages.adapter.MessagesAdapter;
 
 import java.util.LinkedList;
@@ -24,30 +28,45 @@ import java.util.List;
 public class MessagesFragment extends BaseFragment<MessagePresenter> implements IMessageView {
     public static final String TAG = DLog.makeLogTag(MessagesFragment.class);
 
-    private static final String KEY_ID_USER = "ID_USER";
+    private static final String KEY_USER = "ID_USER";
 
-    private EditText        mEtText;
-    private ProgressBar     mProgressBar;
-    private MessagesAdapter mMessagesAdapter;
-    private int             mIdUser;
-    private List<MessageVM> mMessages;
+    private EditText                mEtText;
+    private ProgressBar             mProgressBar;
+    private MessagesAdapter         mMessagesAdapter;
+    private ICommonFragmentCallback mListener;
+    private List<MessageVM>         mMessages;
     private boolean mLoading = false;
 
     public MessagesFragment() {
     }
 
-    public static MessagesFragment newInstance(int idUser) {
+    public static MessagesFragment newInstance(UserVM userVM) {
         Bundle args = new Bundle();
-        args.putInt(KEY_ID_USER, idUser);
+        args.putParcelable(KEY_USER, userVM);
         final MessagesFragment messagesFragment = new MessagesFragment();
         messagesFragment.setArguments(args);
         return messagesFragment;
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (ICommonFragmentCallback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement FragmentButtonListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIdUser = getArguments().getInt(KEY_ID_USER);
         mMessages = new LinkedList<>();
         mMessagesAdapter = new MessagesAdapter(mMessages);
     }
@@ -67,7 +86,19 @@ public class MessagesFragment extends BaseFragment<MessagePresenter> implements 
         mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading);
         Button btSend = (Button) view.findViewById(R.id.bt_send);
         btSend.setOnClickListener(v->mPresenter.sendMessage(mEtText.getText().toString()));
+
         mPresenter.bindView(this);
+        UserVM userVM = null;
+        if (getArguments() != null) {
+            userVM = getArguments().getParcelable(KEY_USER);
+            if (userVM != null) {
+                mListener.showTitle(userVM.firstName + " " + userVM.lastName);
+                mListener.showSubtitle(userVM.online == 1 ? getString(R.string.status_online)
+                                                          : getString(R.string.fragment_subtitle_message) + " " +
+                                               DateTimeHelper.convertTimestampToString(userVM.lastSeen.time));
+            }
+        }
+        mPresenter.setUserVM(userVM);
         mPresenter.load();
     }
 
@@ -112,8 +143,8 @@ public class MessagesFragment extends BaseFragment<MessagePresenter> implements 
     }
 
     @Override
-    public int getIdUser() {
-        return mIdUser;
+    public void showCount(int count) {
+
     }
 
     @Override

@@ -16,18 +16,18 @@ import com.dmbaryshev.vkschool.presenter.AudioPresenter;
 import com.dmbaryshev.vkschool.utils.DLog;
 import com.dmbaryshev.vkschool.view.audio.adapter.AudioAdapter;
 import com.dmbaryshev.vkschool.view.common.BaseFragment;
-import com.dmbaryshev.vkschool.view.common.IHolderClick;
+import com.dmbaryshev.vkschool.view.common.ICommonFragmentCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudioView,
-                                                                           IHolderClick {
+                                                                           AudioAdapter.IAudioAdapterClickListener {
     public static final String TAG = DLog.makeLogTag(AudioFragment.class);
-    private ProgressDialog mProgressDialog;
-    private IAudioFragmentListener mListener;
-    private AudioAdapter mAudioAdapter;
-    private List<AudioVM> mVkAudios;
+    private ProgressDialog         mProgressDialog;
+    private IAudioFragmentCallback mListener;
+    private AudioAdapter           mAudioAdapter;
+    private List<AudioVM>          mVkAudios;
     private boolean mLoading = false;
 
     public AudioFragment() {
@@ -39,14 +39,14 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
 
     @Override
     public void onItemClick(int adapterPosition) {
-        mListener.openRecommendationsAudioFragment(mAudioAdapter.getItem(adapterPosition));
+        mAudioAdapter.showAdditionBar(adapterPosition);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (IAudioFragmentListener) activity;
+            mListener = (IAudioFragmentCallback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement FragmentButtonListener");
         }
@@ -80,11 +80,16 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
         mPresenter.load();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mListener.showTitle(getString(R.string.fragment_title_audio));
+    }
+
     private void initRecyclerView(View view) {
         RecyclerView rvTracks = (RecyclerView) view.findViewById(R.id.rv_audio);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rvTracks.setLayoutManager(layoutManager);
-        rvTracks.setHasFixedSize(false);
         rvTracks.setItemAnimator(new DefaultItemAnimator());
         rvTracks.setAdapter(mAudioAdapter);
         rvTracks.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -154,7 +159,24 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
         mAudioAdapter.notifyDataSetChanged();
     }
 
-    public interface IAudioFragmentListener {
+    @Override
+    public void showCount(int count) {
+        mListener.showSubtitle("" + count + " " + getResources().getQuantityString(R.plurals.track_count,
+                                                                                   count));
+    }
+
+    @Override
+    public void onPlayClick(int position) {
+//        startservice
+
+    }
+
+    @Override
+    public void onRecommendationClick(int position) {
+        mListener.openRecommendationsAudioFragment(mAudioAdapter.getItem(position));
+    }
+
+    public interface IAudioFragmentCallback extends ICommonFragmentCallback {
         void openRecommendationsAudioFragment(AudioVM audioVM);
     }
 }

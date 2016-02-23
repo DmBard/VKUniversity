@@ -10,7 +10,6 @@ import com.dmbaryshev.vkschool.presenter.common.BasePresenter;
 import com.dmbaryshev.vkschool.presenter.common.PresenterCache;
 
 public abstract class BaseFragment<P extends BasePresenter> extends Fragment {
-
     protected P       mPresenter;
     private   boolean isDestroyedBySystem;
     private PresenterCache mPresenterCache = PresenterCache.getInstance();

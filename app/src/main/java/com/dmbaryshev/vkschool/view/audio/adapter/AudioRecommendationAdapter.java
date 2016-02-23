@@ -1,10 +1,12 @@
 package com.dmbaryshev.vkschool.view.audio.adapter;
 
 import android.content.Context;
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dmbaryshev.vkschool.R;
@@ -17,10 +19,11 @@ import java.util.List;
 
 public class AudioRecommendationAdapter extends RecyclerView.Adapter<AudioRecommendationAdapter.ViewHolder> {
     private static final String TAG = DLog.makeLogTag(AudioAdapter.class);
-    private List<AudioVM> items;
-    private IHolderClick mListener;
+    private List<AudioVM>                   items;
+    private IAudioRecomAdapterClickListener mListener;
+    private SimpleArrayMap<Integer, Boolean> mIsOpenedMap = new SimpleArrayMap<>();
 
-    public AudioRecommendationAdapter(List<AudioVM> items, IHolderClick listener) {
+    public AudioRecommendationAdapter(List<AudioVM> items, IAudioRecomAdapterClickListener listener) {
         if (items != null) {
             this.items = items;
             mListener = listener;
@@ -30,8 +33,8 @@ public class AudioRecommendationAdapter extends RecyclerView.Adapter<AudioRecomm
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        // TODO: 23.02.2016 change layout
-        View view = LayoutInflater.from(context).inflate(R.layout.item_audio, parent, false);
+        View view = LayoutInflater.from(context)
+                                  .inflate(R.layout.item_audio_recommendation, parent, false);
         return new ViewHolder(view, mListener);
     }
 
@@ -43,6 +46,9 @@ public class AudioRecommendationAdapter extends RecyclerView.Adapter<AudioRecomm
         holder.tvDuration.setText(DateTimeHelper.convertDurationToString(item.duration));
         holder.tvTrack.setText(item.title);
         holder.tvArtist.setText(item.artist);
+        Boolean isOpen = mIsOpenedMap.get(position);
+        holder.ivPlay.setVisibility(isOpen == null || !isOpen ? View.GONE : View.VISIBLE);
+        holder.ivAdd.setVisibility(isOpen == null || !isOpen ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -52,19 +58,46 @@ public class AudioRecommendationAdapter extends RecyclerView.Adapter<AudioRecomm
         } else { return 0; }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        protected TextView tvDuration;
-        protected TextView tvArtist;
-        protected TextView tvTrack;
-        protected IHolderClick listener;
+    public void showAdditionBar(int adapterPosition) {
+        Boolean isOpen = mIsOpenedMap.get(adapterPosition);
+        if (isOpen == null) {
+            mIsOpenedMap.put(adapterPosition, true);
+        } else {
+            mIsOpenedMap.put(adapterPosition, !isOpen);
+        }
+        notifyItemChanged(adapterPosition);
+    }
 
-        public ViewHolder(View view, final IHolderClick listener) {
+    public AudioVM getItem(int position) {
+        return items.get(position);
+    }
+
+    public interface IAudioRecomAdapterClickListener extends IHolderClick {
+        void onPlayClick(int position);
+
+        void onAddClick(int position);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        protected ImageView ivPlay;
+        protected ImageView ivAdd;
+        protected TextView  tvDuration;
+        protected TextView  tvArtist;
+        protected TextView  tvTrack;
+
+        protected IAudioRecomAdapterClickListener listener;
+
+        public ViewHolder(View view, final IAudioRecomAdapterClickListener listener) {
             super(view);
             tvDuration = (TextView) view.findViewById(R.id.tv_duration);
             tvTrack = (TextView) view.findViewById(R.id.tv_track);
             tvArtist = (TextView) view.findViewById(R.id.tv_artist);
+            ivPlay = (ImageView) view.findViewById(R.id.iv_play);
+            ivAdd = (ImageView) view.findViewById(R.id.iv_add);
             this.listener = listener;
             view.setOnClickListener(v -> listener.onItemClick(getAdapterPosition()));
+            ivPlay.setOnClickListener(v->listener.onPlayClick(getAdapterPosition()));
+            ivAdd.setOnClickListener(v->listener.onAddClick(getAdapterPosition()));
         }
     }
 }
