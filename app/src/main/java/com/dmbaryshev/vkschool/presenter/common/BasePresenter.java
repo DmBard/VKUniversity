@@ -24,6 +24,11 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
     protected List<VM> mMissedAnswerList;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     protected Observable<ResponseAnswer<VM>> mObservable;
+    private   int                            mCount;
+
+    public int getCount() {
+        return mCount;
+    }
 
     protected void addSubscription(Subscription subscription) {
         compositeSubscription.add(subscription);
@@ -49,13 +54,11 @@ public abstract class BasePresenter<T extends IView<VM>, VM extends IViewModel> 
             mView.showError(R.string.error_common);
             return;
         }
-        int count = data.getCount();
+        mCount = data.getCount();
         VkError vkError = data.getVkError();
         List<VM> answer = data.getAnswer();
 
-        if (count != 0) {
-            mView.showCount(count);
-        }
+        mView.showCount(mCount);
 
         if (vkError != null) {
             mView.showError(vkError.errorMsg);

@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import com.dmbaryshev.vkschool.model.network.ResponseAnswer;
 import com.dmbaryshev.vkschool.model.repository.AudioRepo;
 import com.dmbaryshev.vkschool.model.view_model.AudioVM;
+import com.dmbaryshev.vkschool.utils.DLog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class AudioService extends Service implements MediaPlayer.OnPreparedListener,
                                                      MediaPlayer.OnCompletionListener,
                                                      AudioHandler.AudioHandlerCallback {
+    private static final String TAG                  = DLog.makeLogTag(AudioService.class);
     public static final  int    NOTIFICATION_ID      = 20;
     private static final int    TRACKS_COUNT         = 30;
     public static final  String ACTION_PLAY          = "com.dmbaryshev.vkschool.service.action.PLAY";
@@ -37,7 +40,6 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     public static final  String ACTION_PREVIOUS      = "com.dmbaryshev.vkschool.service.action.PREVIOUS";
     private static final String EXTRA_AUDIO_LIST     = "com.dmbaryshev.vkschool.service.extra.AUDIO_LIST";
     private static final String EXTRA_AUDIO_POSITION = "com.dmbaryshev.vkschool.service.extra.AUDIO_POSITION";
-    private              int    mOffset              = 0;
     private AudioHandler  mAudioHandler;
     private Messenger     mMessenger;
     private MediaPlayer   mMediaPlayer;
@@ -46,7 +48,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     private CompositeSubscription mCompositeSubscription = new CompositeSubscription();
 
     private AudioVM mCurrentAudioVM;
-    private boolean mIsPause= false;
+    private boolean mIsPause  = false;
+    private boolean isLoading = false;
 
     public AudioService() {
     }
@@ -207,21 +210,30 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onNext() {
+        if (isLoading) {return;}
         mCurrentPosition++;
         mIsPause = false;
-        if (mCurrentPosition >= mAudioVMs.size()) {
+        if (mCurrentPosition >= mAudioVMs.size() - 1) {
             loadMore();
+            return;
         }
         onPlay();
     }
 
     public void loadMore() {
+        isLoading = true;
         Observable<ResponseAnswer<AudioVM>> observable = new AudioRepo().getAudio(TRACKS_COUNT,
-                                                                                  mOffset);
-        Subscription subscription = observable.subscribe(audioVMResponseAnswer->mAudioVMs.addAll(
-                audioVMResponseAnswer.getAnswer()));
+                                                                                  mAudioVMs.size() + TRACKS_COUNT);
+        Subscription subscription = observable.observeOn(Schedulers.io())
+                                              .subscribe(audioVMResponseAnswer->{
+                                                  isLoading = false;
+                                                  mAudioVMs.addAll(audioVMResponseAnswer.getAnswer());
+                                                  onPlay();
+                                              }, throwable->{
+                                                  DLog.e(TAG, throwable.getMessage(), throwable);
+                                                  isLoading = false;
+                                              });
         mCompositeSubscription.add(subscription);
-        mOffset += TRACKS_COUNT;
     }
 
     @Override

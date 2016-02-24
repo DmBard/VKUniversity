@@ -84,6 +84,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
     public void onResume() {
         super.onResume();
         mListener.showTitle(getString(R.string.fragment_title_audio));
+        showCount(mPresenter.getCount());
     }
 
     private void initRecyclerView(View view) {
@@ -161,6 +162,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
 
     @Override
     public void showCount(int count) {
+        if (count == 0) mListener.showSubtitle("");
         mListener.showSubtitle("" + count + " " + getResources().getQuantityString(R.plurals.track_count,
                                                                                    count));
     }

@@ -91,6 +91,7 @@ public class AudioRecommendationFragment extends BaseFragment<AudioRecommendatio
         }
         mPresenter.setTargetAudio(audioVM);
         mPresenter.load();
+        showCount(mPresenter.getCount());
     }
 
     private void initRecyclerView(View view) {
