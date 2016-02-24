@@ -142,13 +142,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public String getCurrentFragmentTag() {
-        if (mManager == null) {return null;}
-        FragmentManager.BackStackEntry backStackEntry = mManager.getBackStackEntryAt(mManager.getBackStackEntryCount() - 1);
-        if (backStackEntry == null) { return null; }
-        return backStackEntry.getName();
-    }
-
     @Override
     public void openMessageFragment(UserVM userVM) {
         replaceFragment(MessagesFragment.newInstance(userVM), MessagesFragment.TAG, true);
@@ -171,7 +164,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void openFriendsFragment(boolean backstack) {
-        replaceFragment(AudioFragment.newInstance(), AudioFragment.TAG, backstack);
+        replaceFragment(FriendsFragment.newInstance(), FriendsFragment.TAG, backstack);
     }
 
     private void openAudioFragment() {
