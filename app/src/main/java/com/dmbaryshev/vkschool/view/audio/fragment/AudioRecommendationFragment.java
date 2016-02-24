@@ -179,7 +179,7 @@ public class AudioRecommendationFragment extends BaseFragment<AudioRecommendatio
 
     @Override
     public void onPlayClick(int position) {
-        //        start service
+        mPresenter.play(position);
     }
 
     @Override

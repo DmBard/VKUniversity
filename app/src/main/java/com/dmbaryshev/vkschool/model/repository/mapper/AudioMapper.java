@@ -6,6 +6,6 @@ import com.dmbaryshev.vkschool.model.view_model.AudioVM;
 public class AudioMapper extends BaseMapper<VkAudio, AudioVM> {
     @Override
     protected AudioVM createViewModel(VkAudio vkAudio) {
-        return new AudioVM(vkAudio.id, vkAudio.ownerId, vkAudio.artist, vkAudio.title, vkAudio.duration);
+        return new AudioVM(vkAudio.id, vkAudio.ownerId, vkAudio.artist, vkAudio.title, vkAudio.url, vkAudio.duration);
     }
 }

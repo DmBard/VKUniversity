@@ -9,13 +9,15 @@ public class AudioVM implements IViewModel, Parcelable {
     public int ownerId;
     public String artist;
     public String title;
+    public String url;
     public int duration;
 
-    public AudioVM(int id, int ownerId, String artist, String title, int duration) {
+    public AudioVM(int id, int ownerId, String artist, String title, String url, int duration) {
         this.id = id;
         this.ownerId = ownerId;
         this.artist = artist;
         this.title = title;
+        this.url = url;
         this.duration = duration;
     }
 
@@ -24,6 +26,7 @@ public class AudioVM implements IViewModel, Parcelable {
         ownerId = in.readInt();
         artist = in.readString();
         title = in.readString();
+        url = in.readString();
         duration = in.readInt();
     }
 
@@ -38,6 +41,7 @@ public class AudioVM implements IViewModel, Parcelable {
         out.writeInt(ownerId);
         out.writeString(artist);
         out.writeString(title);
+        out.writeString(url);
         out.writeInt(duration);
     }
 

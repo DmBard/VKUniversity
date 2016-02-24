@@ -167,6 +167,7 @@ public class AudioFragment extends BaseFragment<AudioPresenter> implements IAudi
 
     @Override
     public void onPlayClick(int position) {
+        mPresenter.play(position);
 //        startservice
 
     }
